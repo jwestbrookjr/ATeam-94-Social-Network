@@ -1,5 +1,9 @@
+package application;
+
 import java.io.FileNotFoundException;
 import java.io.IOException;
+
+import application.SocialGraph.VertexNode;
 
 public interface SocialNetworkADT {
 
@@ -66,11 +70,11 @@ public interface SocialNetworkADT {
      * SocialNetwork(name, friends)
      * @return GraphNode contain central user's information 
      */
-    public GraphNode<String> getCentralUser();
+    public VertexNode getCentralUser();
     
     /**
      * Get the graph that holds all info about users in the SocialNetwork 
      * @return graph- that contains user info 
      */
-    public UndirectedGraph getGraph();
+    public SocialGraph getGraph();
 }

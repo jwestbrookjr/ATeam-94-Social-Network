@@ -35,7 +35,7 @@ public class SocialGraph implements GraphADT {
 	// List of vertices in this graph.
 	private ArrayList<VertexNode> vertexList;
 
-	private class VertexNode {
+	public class VertexNode {
 		// Name of this vertex.
 		private String name;
 		// List of successors (directed edges).
@@ -46,7 +46,7 @@ public class SocialGraph implements GraphADT {
 		 * 
 		 * @param name - name of this vertex.
 		 */
-		private VertexNode(String name) {
+		public VertexNode(String name) {
 			this.name = name;
 			successors = new ArrayList<>();
 		}
@@ -56,7 +56,7 @@ public class SocialGraph implements GraphADT {
 		 * 
 		 * @return - String name of this vertex.
 		 */
-		private String getName() {
+		public String getName() {
 			return name;
 		}
 
@@ -67,7 +67,7 @@ public class SocialGraph implements GraphADT {
 		 *             list.
 		 * @return - true if vertex is in successors list, false otherwise.
 		 */
-		private boolean isSuccessor(String name) {
+		public boolean isSuccessor(String name) {
 			if (successors.contains(getVertexByName(name))) {
 				return true;
 			} else {
@@ -83,7 +83,7 @@ public class SocialGraph implements GraphADT {
 		 *             ArrayList.
 		 * @return - VertexNode with matching name, or null if it is not found.
 		 */
-		private VertexNode getSuccessor(String name) {
+		public VertexNode getSuccessor(String name) {
 			// If name is null, return null.
 			if (name == null) {
 				return null;
@@ -104,7 +104,7 @@ public class SocialGraph implements GraphADT {
 		 * Method which adds a successor (and therefore a directed edge) from
 		 * this vertex to another vertex.
 		 */
-		private void addSuccessor(String name) {
+		public void addSuccessor(String name) {
 			// If name is null, return without doing anything.
 			if (name == null) {
 				return;
@@ -129,7 +129,7 @@ public class SocialGraph implements GraphADT {
 		 *             list.
 		 * @return - true if vertex is removed, false otherwise.
 		 */
-		private boolean deleteSuccessor(String name) {
+		public boolean deleteSuccessor(String name) {
 			// If name of vertex is null, return false.
 			if (name == null) {
 				return false;
@@ -154,7 +154,7 @@ public class SocialGraph implements GraphADT {
 		 * Method which deletes all successors (and therefore edges) from this
 		 * vertex.
 		 */
-		private void clearSuccessors() {
+		public void clearSuccessors() {
 			successors = null;
 		}
 	}
@@ -165,7 +165,7 @@ public class SocialGraph implements GraphADT {
 	 * @param name - name of the vertex for which to search in the graph.
 	 * @return - vertex with the matching name.
 	 */
-	private VertexNode getVertexByName(String name) {
+	public VertexNode getVertexByName(String name) {
 		// Iterate through the vertex list and return the node with the matching
 		// name.
 		for (int i = 0; i < vertexList.size(); ++i) {
