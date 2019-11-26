@@ -1,9 +1,8 @@
 package application;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-
-import application.SocialGraph.VertexNode;
 
 public interface SocialNetworkADT {
 
@@ -14,7 +13,7 @@ public interface SocialNetworkADT {
      * @throws InvalidInputFileFormatException - if input file does not valid format
      * @throws FileNotFoundException - if file is not found
      */
-    public void createSocialNetWork()
+    public void createSocialNetWork(File file )
         throws InvalidInputFileFormatException, FileNotFoundException;
   
     /**
@@ -52,7 +51,7 @@ public interface SocialNetworkADT {
      * the contents of the input file used to create the SocialNetwork to the
      * new log file 
      */
-    public void createLogfile() throws IOException;
+    public void createLogfile(String inputFileName) throws IOException;
     
     
     /**
@@ -70,7 +69,7 @@ public interface SocialNetworkADT {
      * SocialNetwork(name, friends)
      * @return GraphNode contain central user's information 
      */
-    public VertexNode getCentralUser();
+    public GraphNode getCentralUser();
     
     /**
      * Get the graph that holds all info about users in the SocialNetwork 
