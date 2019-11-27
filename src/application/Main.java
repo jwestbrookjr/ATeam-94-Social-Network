@@ -159,6 +159,8 @@ public class Main extends Application {
                          // a new Social Network with the file the GUI
                          // user chose then do not update the social
                          // network and have a pop up window display
+                        SocialNetwork newSN = new SocialNetwork();
+                        newSN.createSocialNetWork(file);
                         sn.createSocialNetWork(file);
                     } catch (Exception ex) {
                         // Displays an alert that tells the user their
@@ -217,23 +219,44 @@ public class Main extends Application {
          * A new central user can be chosen as well
          * *******************************************************************
          * STILL NEED TO MAKE IT SO WE CAN:
-         * 1) ADD A FRIENDSHIP BETWEEN TWO USERS  
-         * 2) REMOVE A FRIENDSHIP BETWEEN TWO USERS 
+         * 1) REMOVE A FRIENDSHIP BETWEEN TWO USERS 
          */
         
         // Adding TextFields, Buttons, labels to a VBox
-        VBox vbox2 = new VBox();      
+        VBox vbox2 = new VBox();   
+        
         Button addUserBTN = new Button("Add User");
         TextField addUser = new TextField();
+        addUser.setMaxWidth(100);
+        
         Button removeUserBTN = new Button("Remove User");
         TextField removeUser = new TextField();
+        removeUser.setMaxWidth(100);
+        
         Button setCentralUser = new Button("Set Central User");
         TextField setU = new TextField();
-        vbox2.getChildren().addAll(new Label("Add User:"), addUser,
-            addUserBTN, new Label("Remove User:"),
-            removeUser, removeUserBTN,setU,new Label("View User"), setCentralUser);
+        setU.setMaxWidth(100);
+        
+        Button addFriendship = new Button("Add Friendship");
+        TextField addFriend1 = new TextField();
+        TextField addFriend2 = new TextField();
+        addFriend1.setMaxWidth(100);
+        addFriend2.setMaxWidth(100);
+        HBox friendBox = new HBox();
+        friendBox.getChildren().addAll(addFriend1, addFriend2);
+        
+        vbox2.getChildren().addAll(new Label("Add User:"), addUser, addUserBTN,
+            new Label("Remove User:"), removeUser, removeUserBTN, setU, new Label("View User"),
+            setCentralUser,new Label("Add Friendship"), friendBox, addFriendship);
         root.setRight(vbox2);
      
+        // A pop up window to let the user of the GUI know if their attempt 
+        // to update the Social Network worked or not
+        Alert a = new Alert(AlertType.NONE);
+        // Have to add a ButtonType.CANCEL or else
+        // you cannot exit the alert
+        a.getDialogPane().getButtonTypes().add(ButtonType.CANCEL);
+        
         /*
          * When the addUserBTN is pressed a user is added to the SocialNetwork
          * If the user is already in the Social Network, nothing is added
@@ -241,53 +264,176 @@ public class Main extends Application {
         addUserBTN.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                 
-                String[] words = {"a", addUser.getText()};
-                try {
-                    // Look at updateSocialNetwork for the details of this
-                    // method 
-                    sn.updateSocialNetwork("a", words);
-                    if (!allUserNames.contains(addUser.getText())) {
-                        allUserNames.add(addUser.getText());
+                if (!addUser.getText().isBlank()) {
+                    String[] words = {"a", addUser.getText()};
+                    try {
+                        int numberOfUsers = sn.getGraph().order();       
+                        // If user is already in the social network do not add
+                        // user, alert gui user and exit method
+                        if(sn.getGraph().search(addUser.getText()) != null){
+                            a.setTitle("Duplicate User");
+                            a.setContentText(
+                                "User " + addUser.getText() + " already in the Social Network");
+                            a.showAndWait();
+                            return;
+                        }
+                        
+                        // Look at updateSocialNetwork for the details of this
+                        // method
+                        sn.updateSocialNetwork("a", words);
+                        // If the number of users in the social network increases
+                        // the user was added, alert the gui user
+                        if(numberOfUsers == sn.getGraph().order() - 1) {
+                            a.setTitle("User Added");
+                            a.setContentText(
+                                "User " + addUser.getText() + " added to " + "Social Network");
+                            a.showAndWait();
+                        } 
+                        // Update the ObservableList containing all users 
+                        if (!allUserNames.contains(addUser.getText())) {
+                            allUserNames.add(addUser.getText());
+                        }
+                        
+                    } catch (Exception e) {
+
                     }
-
-                } catch (Exception e) {
-
                 }
             }
         });
 
         /*
-         * When the removeUserBTN is pressed a user is removed if present in 
-         * the social network, also removes all edges(friendships) of the user
+         * When the removeUserBTN is pressed a user is removed if present in the social network,
+         * also removes all edges(friendships) of the user
          */
         removeUserBTN.setOnAction(new EventHandler<ActionEvent>() {
             @Override
-            public void handle(ActionEvent event) {                
-                String[] words = {"r", removeUser.getText()};
-                try {
-                    // Look at updateSocialNetwork for the details of this
-                    // method 
-                    sn.updateSocialNetwork("r", words);
-                    if (allUserNames.contains(removeUser.getText())) {             
-                        allUserNames.remove(removeUser.getText());
+            public void handle(ActionEvent event) {
+                if (!removeUser.getText().isBlank()) {
+                    String[] words = {"r", removeUser.getText()};
+                    try {
+                        // Number of people in the social network
+                        int numberOfUsers = sn.getGraph().order();
+                        // Look at updateSocialNetwork for the details of this
+                        // method
+                        sn.updateSocialNetwork("r", words);
+                        // If number of users decreases by one then the user
+                        // was found and removed from the social network
+                        // GUI user is alerted
+                        if (numberOfUsers - 1 == sn.getGraph().order()) {
+                            a.setTitle("User Removed");
+                            a.setContentText("User " + removeUser.getText()
+                                + " removed from the Social Network");
+                            a.showAndWait();
+
+                        } else {
+                            // User not found, no one was removed from the 
+                            // social network
+                            a.setTitle("User Not Removed");
+                            a.setContentText("User " + removeUser.getText()
+                                + " was not found in the" + " Social Network");
+                            a.showAndWait();
+                        }
+                        // Updating the ObservableList allUserNames
+                        // in the GUI if necessary
+                        if (allUserNames.contains(removeUser.getText())) {
+                            allUserNames.remove(removeUser.getText());
+                        }
+                        // If the current list of friend being displayed 
+                        // contains the user that was just removed update
+                        // the list 
                         if (namesOfFriends.contains(removeUser.getText())) {
                             namesOfFriends.remove(removeUser.getText());
                         }
-                        System.out.println("Remove:  " + sn.getCentralUser().getUserName());
-                        if(sn.getCentralUser().getUserName().
-                            equals(removeUser.getText())) {
-                            root.setCenter(new Label("Removed Central User From"
-                                + "Social Network"));
+                        // If current central user is deleted replace the user                       
+                        // info being displayed with "Removed Central User"
+                        if (sn.getCentralUser().getUserName().equals(removeUser.getText())) {
+                            root.setCenter(new Label("Removed Central User"));
+                        }              
+
+                    } catch (Exception e) {
+
+                    }
+                }
+            }
+        });
+
+        /*
+         * When the addFriendship button is pressed a friendship is added if 
+         * it does not already exist and the input is valid 
+         */
+        addFriendship.setOnAction(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                if (!addFriend1.getText().isBlank() & !addFriend2.getText().isBlank()) {
+                    String[] words = {"a", addFriend1.getText(), addFriend2.getText()};
+                    // If same user is entered twice, no friendship is added
+                    // and an alert shows up 
+                    if (addFriend1.getText().equals(addFriend2.getText())) {
+                        a.setTitle("Error");
+                        a.setContentText("You entered the same user twice");
+                        a.showAndWait();
+                        return;
+                    }
+                    try {
+
+                        GraphNode friend1 = sn.getGraph().search(addFriend1.getText());
+                        if (friend1 != null) {
+                            // If friendship already exists between the two users
+                            // do not create a new friendship, gui user is alerted
+                            if (friend1.getFriends().contains(addFriend2.getText())) {
+                                a.setTitle("Friendship not added ");
+                                a.setContentText(addFriend1.getText() + " and "
+                                    + addFriend2.getText() + " are already friends");
+                                a.showAndWait();
+                                return;
+                            }
+                        }
+                        // Initial number of edges in the graph 
+                        int numberOfFriendships = sn.getGraph().size();
+                        // Look at updateSocialNetwork for the details of this
+                        // method
+                        sn.updateSocialNetwork("a", words);
+                        // If the number of edges is increased a new friendship 
+                        // was created, gui user is alerted
+                        if (numberOfFriendships + 1 == sn.getGraph().size()) {
+                            a.setTitle("Friendship added ");
+                            a.setContentText(addFriend1.getText() + " and " + addFriend2.getText()
+                                + " are now friends");
+                            a.showAndWait();
                         }
                         
-                    }
+                         // Updating the ObservableList allUserNames
+                         // in the GUI if necessary                         
+                        if (!allUserNames.contains(addFriend1.getText())) {
+                            allUserNames.add(addFriend1.getText());
+                        }
+                        if (!allUserNames.contains(addFriend2.getText())) {
+                            allUserNames.add(addFriend2.getText());
+                        }
+                        // If either user in the new friendship is currently
+                        // the central user(user being displayed) need to update
+                        // their list of friends being displayed          
+                        if (sn.getCentralUser().getUserName().equals(addFriend2.getText())) {
+                            if (!namesOfFriends.contains(addFriend1.getText())) {
+                                namesOfFriends.add(addFriend1.getText());
+                            }
+                        }
+                        if (sn.getCentralUser().getUserName().equals(addFriend1.getText())) {
+                            if (!namesOfFriends.contains(addFriend2.getText())) {
 
-                } catch (Exception e) {
+                                namesOfFriends.add(addFriend2.getText());
+                            }
+                        }
+
+                    } catch (Exception e) {
+
+                    }
 
                 }
             }
         });
+
+        
         
         /*
          * When the setCentral button is pressed if the name in the
@@ -302,7 +448,10 @@ public class Main extends Application {
                     sn.setCentralUser(newCentralU);
                     createUserDisplay(sn.getCentralUser(), root, vbox1, hbox);
                 }else {
-                    root.setCenter(new Label("User not found in Social Network"));
+                    a.setTitle("User Not Found ");
+                    a.setContentText("User " + setU.getText()+" not found in "
+                       + "the Social Network" );
+                    a.showAndWait();
                 }
             }
         });
