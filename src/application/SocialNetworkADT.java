@@ -4,9 +4,14 @@ import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 
+/**
+ * Interface which outlines implementation of an abstract social network.
+ * 
+ * @author Sam Peaslee
+ *
+ */
 public interface SocialNetworkADT {
 
-    
     /**
      * Parses the contents of the input file to create a SocialNetWork.
      * Stores users in a graph depending on the contents of the input file 

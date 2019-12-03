@@ -2,8 +2,8 @@ package application;
 
 /**
  * Filename: GraphNode.java 
- * Project:
- * Authors:
+ * Project: ATeam 94 Social Network
+ * Authors: Sam Peaslee, Jon Westbrook
  * 
  * Class to store a vertex in a graph.
  */
