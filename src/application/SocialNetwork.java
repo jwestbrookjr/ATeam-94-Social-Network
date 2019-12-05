@@ -15,7 +15,7 @@ import java.io.UnsupportedEncodingException;
  * @author Sam Peaslee
  *
  */
-public class SocialNetwork {
+public class SocialNetwork implements SocialNetworkADT{
 
 	// Graph that hold users in the SocialNetwork.
 	private SocialGraph graph;
@@ -138,41 +138,51 @@ public class SocialNetwork {
 		}
 	}
 
-	/**
-	 * Create a new file to store the log for the SocialNetwork and copy the
-	 * contents of the input file used to create the SocialNetwork to the new
-	 * log file.
-	 */
+	
+	
+    /**
+     * Copies contents of a text file line by line 
+     * too the log file. Used when a file is used to update the Social Network
+     * @param inputFile
+     * @param log
+     * @throws IOException
+     */
+    public void updateLogFile(File inputFile, FileWriter log) throws IOException {
+        // Copy contents of input file to log file
+        Scanner scn = new Scanner(inputFile);
+        while (scn.hasNextLine()) {
+            log.write(scn.nextLine() + "\n");
+        }
+        scn.close();
 
-	public void createLogfile(String inputFile) throws IOException {
-		// Create new log file
-		// PrintWriter log = new PrintWriter("log.txt", "UTF-8");
-		File logFile = new File("log.txt");
-		FileWriter log = new FileWriter(logFile);
-		// Get Input File
-		File input = new File(inputFile);
-
-		// Copy contents of input file to log file.
-		Scanner scn = new Scanner(input);
-		while (scn.hasNextLine()) {
-			log.write(scn.nextLine() + "\n");
-		}
-		log.close();
-		scn.close();
-	}
-
-	/**
-	 * When the SocialNetwork is updated by someone using the GUI, add the
-	 * command they used to update the SocialNetwork to the log file. Example:
-	 * new user SAM was added to the SocialNetwork. The line "a sam" should be
-	 * added to the log file.
-	 * 
-	 * @param logFileName - name of log file
-	 */
-	public void updateLogFile(String logFileName) {
-		// TODO Need to implement this method still
-
-	}
+    }
+    
+    
+    /**
+     * When the SocialNetwork is updated by someone using the GUI add the 
+     * command they used to update the SocialNetwork to the log file 
+     * Example:
+     *      new user SAM was added to the SocialNetwork
+     *      the line "a sam" should be added to the log file 
+     * @param update
+     * @param log
+     * @throws IOException
+     */
+    public void updateLogFile(String[] update, FileWriter log) throws IOException {
+        String line = "";
+        for(int i = 0; i < update.length; i++) {
+            if(i == 0) {
+                line = update[i];
+            }else if(i  == update.length - 1) {
+                line = line+ " " +update[i] + "\n";
+            }else {
+                line = line + " " + update[i];
+            }
+        }        
+        log.write(line);        
+    }
+	
+	
 
 	/**
 	 * Main method for testing and debugging only.

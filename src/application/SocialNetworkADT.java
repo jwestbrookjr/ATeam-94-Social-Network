@@ -2,6 +2,7 @@ package application;
 
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.FileWriter;
 import java.io.IOException;
 
 /**
@@ -10,7 +11,7 @@ import java.io.IOException;
  * @author Sam Peaslee
  *
  */
-public interface SocialNetworkADT {
+public interface SocialNetworkADT{
 
     /**
      * Parses the contents of the input file to create a SocialNetWork.
@@ -51,23 +52,25 @@ public interface SocialNetworkADT {
     public void updateSocialNetwork(String command, String[] words)
         throws InvalidInputFileFormatException; 
     
-    /**
-     * Create a new file to store the log for the SocialNetwork and copy
-     * the contents of the input file used to create the SocialNetwork to the
-     * new log file 
-     */
-    public void createLogfile(String inputFileName) throws IOException;
-    
-    
+        
     /**
      * When the SocialNetwork is updated by someone using the GUI add the 
      * command they used to update the SocialNetwork to the log file 
      * Example:
      *      new user SAM was added to the SocialNetwork
      *      the line "a sam" should be added to the log file 
-     * @param logFileName - name of log file 
+     * @param update - String array containing line to add to log file
+     * @param log - FileWriter to write to the log file 
      */
-    public void updateLogFile(String logFileName);
+    public void updateLogFile(String[] update, FileWriter log) throws IOException;
+
+    /**
+     * When the social new
+     * @param inputFile
+     * @param log
+     * @throws IOException
+     */
+    public void updateLogFile(File inputFile, FileWriter log) throws IOException;
     
     /**
      * Get the information stored about the current central user of the 
