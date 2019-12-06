@@ -128,7 +128,7 @@ public class SocialNetwork implements SocialNetworkADT{
 			}
 		} else if (command.equals("s")) {
 			if (cmdLine.length == 2) {
-				System.out.println(cmdLine[1]);
+			//	System.out.println(cmdLine[1]);
 				setCentralUser(graph.search(cmdLine[1]));
 			} else {
 				throw new InvalidInputFileFormatException();
