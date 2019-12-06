@@ -6,3 +6,5 @@ a rose ryan
 r ryan sam
 a ryan susan
 a rose bob
+s ryan
+a rose susan

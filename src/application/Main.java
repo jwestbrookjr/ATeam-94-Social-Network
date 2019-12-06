@@ -301,7 +301,7 @@ public class Main extends Application {
                     }
                     allUserNamesDisplayed
                             .addAll(socialNetwork.getGraph().getAllUsers());
-                    allUsersDisplayedList.setItems(allUserNames);
+                    allUsersDisplayedList.setItems(allUserNamesDisplayed);
                     numOfUsersDisplayed.setText("Number of Users: "+  allUserNamesDisplayed.size());
                     root.setRight(imageBox);
                 }
@@ -816,7 +816,7 @@ public class Main extends Application {
                     
                     // Initial number of edges in the graph.
                     int numberOfFriendships = socialNetwork.getGraph().size();
-                    ArrayList<String> mutualUsers = new ArrayList();
+                    
                     try {
                         GraphNode friendA = socialNetwork.getGraph()
                                 .search(mutualFriend1.getText().trim().toLowerCase());
@@ -829,7 +829,7 @@ public class Main extends Application {
                                     .contains(mutualFriend2.getText().trim().toLowerCase())) {
                                 
                             }
-                            mutualUsers = friendA.getFriends();
+                            ArrayList<String> mutualUsers = new ArrayList(friendA.getFriends());
                             mutualUsers.retainAll(friendB.getFriends());
                             
                             ObservableList<String> mutualUsersList = FXCollections
