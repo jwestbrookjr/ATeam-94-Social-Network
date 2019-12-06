@@ -143,7 +143,7 @@ public class Main extends Application {
         // ListView is used to display user names in the GUI; also has built in
         // behavior that makes items of list clickable.
         ListView<String> allUserList = new ListView<String>();
-        /// Sets the max width and height of the list.
+        // Sets the max width and height of the list.
         allUserList.setMaxSize(100, 150);
         
         /*
@@ -167,11 +167,8 @@ public class Main extends Application {
                 new BackgroundFill(Color.DARKOLIVEGREEN, null, null)));
 
         // Adds an icon to the GUI.
- //       ObservableList<String> mutualFriendsDisplayed = FXCollections
- //               .observableArrayList();
         ListView<String> mutualFriendsDisplayedList = new ListView<String>();
         mutualFriendsDisplayedList.setMaxSize(200, 125);
- //       mutualFriendsDisplayedList.setItems(mutualFriendsDisplayed);
         
         Text mutualFriendsText = new Text("Mutual Friends");
         VBox mutualFriendsVBox = new VBox();
@@ -307,17 +304,11 @@ public class Main extends Application {
                 }
             }
         };
-
-
         // When the button is pressed the method above will execute.
         fileButton.setOnAction(updateSociallNetwork);
         fileBox.setAlignment(Pos.BOTTOM_CENTER);
         root.setBottom(fileBox);
-////////////////////////////////////////////////////////////////////////////////
-        /*
-         * Attempt to display mutaul friends
-         */
-        
+
 ////////////////////////////////////////////////////////////////////////////////
         // GIVING THE USER OPTIONS TO REMOVE AND ADD PEOPLE TO THE SOCIAL
         // NETWORK USING TextFields AND Buttons
@@ -788,6 +779,7 @@ public class Main extends Application {
         // text field.
         removeFriend.setOnAction(new RemoveFriendship());
         removeFriend2.setOnAction(new RemoveFriendship());
+        
 ///////////////////////////////////////////////////////////////////////////////
         /**
          * Class which implements the functionality to display mutual friendships.
@@ -800,7 +792,7 @@ public class Main extends Application {
             @Override
             public void handle(ActionEvent event) {
                 if (!mutualFriend1.getText().isBlank()
-                        && !mutualFriend2.getText().isBlank()) {
+                    && !mutualFriend2.getText().isBlank()) {
                     // If same user is entered twice, no mutual friends are displayed
                     // and an alert shows up.
                     if (mutualFriend1.getText().trim().toLowerCase()
@@ -814,17 +806,12 @@ public class Main extends Application {
                         return;
                     }
                     
-                    // Initial number of edges in the graph.
-                    int numberOfFriendships = socialNetwork.getGraph().size();
-                    
                     try {
                         GraphNode friendA = socialNetwork.getGraph()
                                 .search(mutualFriend1.getText().trim().toLowerCase());
                         GraphNode friendB = socialNetwork.getGraph()
                                 .search(mutualFriend2.getText().trim().toLowerCase());
                         if (friendA != null) {
-                            // If friendship exists between the two entered
-                            // names, need to remove the friendship.
                             if (friendA.getFriends()
                                     .contains(mutualFriend2.getText().trim().toLowerCase())) {
                                 
@@ -851,6 +838,7 @@ public class Main extends Application {
                         a.show();
                     }
                 }
+                // Removes text in text fields
                 mutualFriend1.clear();
                 mutualFriend2.clear();
             }
@@ -860,9 +848,7 @@ public class Main extends Application {
         // text field.
         mutualFriend.setOnAction(new MutualFriendship());
         mutualFriend2.setOnAction(new MutualFriendship());
-
-
-        
+       
 ///////////////////////////////////////////////////////////////////////////////
         // CODE TO UPDATE GUI WHEN NAMES IN THE TWO ListView INSTANCES ARE
         // CLICKED ON
@@ -871,7 +857,6 @@ public class Main extends Application {
          * This updates what user is displayed when a friend is clicked in the
          * currents users list of friends
          */
-
         friendList.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent arg0) {
@@ -897,8 +882,6 @@ public class Main extends Application {
                             .search(namesOfFriends.get(indexOfFriend)));
                     createUserDisplay(socialNetwork.getCentralUser(), root,
                             vbox1, hbox);
-                    
-          
                 }
             }
         });
@@ -1023,11 +1006,5 @@ public class Main extends Application {
      */
     public static void main(String[] args) {
         launch(args);
-    }
-
-    
-    private Label updateUserLabel(int size) {
-        Label newLabel = new Label("Number of Users: " + size);
-        return newLabel;
     }
 }
