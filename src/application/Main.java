@@ -153,7 +153,7 @@ public class Main extends Application {
         ObservableList<String> allUserNamesDisplayed = FXCollections
                 .observableArrayList();
         ListView<String> allUsersDisplayedList = new ListView<String>();
-        allUsersDisplayedList.setMaxSize(200, 250);
+        allUsersDisplayedList.setMaxSize(200, 125);
         allUsersDisplayedList.setItems(allUserNamesDisplayed);
         Text numOfUsersDisplayed = new Text("Number of Users: "+  allUserNamesDisplayed.size());
 /////////////////////////////////////////////////////////////////////////////////
@@ -170,12 +170,13 @@ public class Main extends Application {
  //       ObservableList<String> mutualFriendsDisplayed = FXCollections
  //               .observableArrayList();
         ListView<String> mutualFriendsDisplayedList = new ListView<String>();
-        mutualFriendsDisplayedList.setMaxSize(200, 250);
+        mutualFriendsDisplayedList.setMaxSize(200, 125);
  //       mutualFriendsDisplayedList.setItems(mutualFriendsDisplayed);
         
         Text mutualFriendsText = new Text("Mutual Friends");
         VBox mutualFriendsVBox = new VBox();
         mutualFriendsVBox.getChildren().addAll(mutualFriendsText, mutualFriendsDisplayedList);
+        mutualFriendsVBox.setSpacing(10);
         VBox imageBox = new VBox();
         /*
         try {
