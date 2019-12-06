@@ -32,7 +32,7 @@ runjar:
 
 # Create zip file for submitting to handin
 zip: 
-	zip -r makeFileTest.zip .
+	jar -cMf ateam.zip README.txt validFile.txt InvalidFile.txt executable.jar manifest.txt screenshot* application
 
 #Eclipse's "Show Command Line"
 all:
