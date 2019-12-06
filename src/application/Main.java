@@ -61,7 +61,7 @@ public class Main extends Application {
 
     // Will store the names of the friends of the central user.
     ObservableList<String> namesOfFriends;
-    // Used to display the list of friend and makes them clickable.
+    // Used to display the list of friends and makes them clickable.
     ListView<String> friendList = new ListView<String>();
 
     /**
@@ -143,7 +143,7 @@ public class Main extends Application {
         // ListView is used to display user names in the GUI; also has built in
         // behavior that makes items of list clickable.
         ListView<String> allUserList = new ListView<String>();
-        /// Sets the max width and height of the list.
+        // Sets the max width and height of the list.
         allUserList.setMaxSize(100, 150);
         
         /*
@@ -153,9 +153,9 @@ public class Main extends Application {
         ObservableList<String> allUserNamesDisplayed = FXCollections
                 .observableArrayList();
         ListView<String> allUsersDisplayedList = new ListView<String>();
-        allUsersDisplayedList.setMaxSize(200, 250);
+        allUsersDisplayedList.setMaxSize(200, 125);
         allUsersDisplayedList.setItems(allUserNamesDisplayed);
-        Label numOfUsersDisplayed = new Label("Number of Users: "+  allUserNamesDisplayed.size());
+        Text numOfUsersDisplayed = new Text("Number of Users: "+  allUserNamesDisplayed.size());
 /////////////////////////////////////////////////////////////////////////////////
          
         // Pane used to construct the layout of the GUI.
@@ -167,7 +167,15 @@ public class Main extends Application {
                 new BackgroundFill(Color.DARKOLIVEGREEN, null, null)));
 
         // Adds an icon to the GUI.
+        ListView<String> mutualFriendsDisplayedList = new ListView<String>();
+        mutualFriendsDisplayedList.setMaxSize(200, 125);
+        
+        Text mutualFriendsText = new Text("Mutual Friends");
+        VBox mutualFriendsVBox = new VBox();
+        mutualFriendsVBox.getChildren().addAll(mutualFriendsText, mutualFriendsDisplayedList);
+        mutualFriendsVBox.setSpacing(10);
         VBox imageBox = new VBox();
+        /*
         try {
             Image highFive = new Image("application/highfive.png");
             ImageView iconPlace = new ImageView(highFive);
@@ -175,9 +183,12 @@ public class Main extends Application {
         } catch (Exception e) {
             System.out.println(System.getProperty("user.dir"));
             System.out.println(e.getMessage());
-        }  
-        imageBox.getChildren().addAll(numOfUsersDisplayed, allUsersDisplayedList);
+        }
+        */ 
+       
+        imageBox.getChildren().addAll(mutualFriendsVBox, numOfUsersDisplayed, allUsersDisplayedList);
         imageBox.setSpacing(10);
+    //    mutualFriendsVBox.setVisible(false);
         root.setRight(imageBox);
         
 
@@ -287,14 +298,12 @@ public class Main extends Application {
                     }
                     allUserNamesDisplayed
                             .addAll(socialNetwork.getGraph().getAllUsers());
-                    allUsersDisplayedList.setItems(allUserNames);
-                    
+                    allUsersDisplayedList.setItems(allUserNamesDisplayed);
+                    numOfUsersDisplayed.setText("Number of Users: "+  allUserNamesDisplayed.size());
                     root.setRight(imageBox);
                 }
             }
         };
-
-
         // When the button is pressed the method above will execute.
         fileButton.setOnAction(updateSociallNetwork);
         fileBox.setAlignment(Pos.BOTTOM_CENTER);
@@ -362,13 +371,33 @@ public class Main extends Application {
         HBox removeBox = new HBox();
         removeBox.setSpacing(5);
         removeBox.getChildren().addAll(removeFriend1, removeFriend2);
-        HBox addRemoveBox = new HBox();
+       
+        VBox addUserVBox = new VBox();
+        addUserVBox.setSpacing(10);
+        addUserVBox.getChildren().addAll(addUserLabel, addUser, addUserBTN);
+        VBox removeUserVBox = new VBox();
+        removeUserVBox.setSpacing(10);
+        removeUserVBox.getChildren().addAll(removeUserLabel, removeUser, removeUserBTN);
 
-                
-        vbox2.getChildren().addAll(addUserLabel, addUser, addUserBTN,
-                removeUserLabel, removeUser, removeUserBTN, setCentralLabel,
-                setUser, setCentralUser, addFriendLabel, friendBox,
-                addFriendship, removeLabel, removeBox, removeFriend);
+        HBox addRemoveBox = new HBox();
+        addRemoveBox.setSpacing(10);
+        addRemoveBox.getChildren().addAll(addUserVBox,removeUserVBox);
+        
+        Button mutualFriend = new Button("List Mutual Friends");
+        Label mutualLabel = new Label("List Mutual Friends");
+        mutualLabel.setFont(new Font("Arial", 14));
+        TextField mutualFriend1 = new TextField();
+        TextField mutualFriend2 = new TextField();
+        mutualFriend1.setMaxWidth(100);
+        mutualFriend2.setMaxWidth(100);
+        HBox mutualFriendBox = new HBox();
+        mutualFriendBox.setSpacing(5);
+        mutualFriendBox.getChildren().addAll(mutualFriend1, mutualFriend2);
+        
+        vbox2.getChildren().addAll(addRemoveBox,
+                setCentralLabel,setUser, setCentralUser, addFriendLabel, friendBox,
+                addFriendship, removeLabel, removeBox, removeFriend, mutualLabel,
+                mutualFriendBox, mutualFriend);
         root.setLeft(vbox2);
 
         // A pop up window to let the user of the GUI know if their attempt
@@ -428,6 +457,7 @@ public class Main extends Application {
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
+                    numOfUsersDisplayed.setText("Number of Users: "+  allUserNamesDisplayed.size());
                 }
                 addUser.clear();
             }
@@ -494,9 +524,11 @@ public class Main extends Application {
                         }
                     } catch (Exception e) {
                     }
+                    numOfUsersDisplayed.setText("Number of Users: "+  allUserNamesDisplayed.size()); 
                 }
                 removeUser.clear();
             }
+            
         }
 
         // Removes a user when GUI user clicks button or presses enter in text
@@ -593,6 +625,7 @@ public class Main extends Application {
                         }
                     } catch (Exception e) {
                     }
+                    numOfUsersDisplayed.setText("Number of Users: "+  allUserNamesDisplayed.size());
                 }
                 addFriend1.clear();
                 addFriend2.clear();
@@ -746,7 +779,76 @@ public class Main extends Application {
         // text field.
         removeFriend.setOnAction(new RemoveFriendship());
         removeFriend2.setOnAction(new RemoveFriendship());
+        
+///////////////////////////////////////////////////////////////////////////////
+        /**
+         * Class which implements the functionality to display mutual friendships.
+         * 
+         * @author Grant Hellenbrand
+         * @author Alexander Bush
+         *
+         */
+        class MutualFriendship implements EventHandler<ActionEvent> {
+            @Override
+            public void handle(ActionEvent event) {
+                if (!mutualFriend1.getText().isBlank()
+                    && !mutualFriend2.getText().isBlank()) {
+                    // If same user is entered twice, no mutual friends are displayed
+                    // and an alert shows up.
+                    if (mutualFriend1.getText().trim().toLowerCase()
+                            .equals(mutualFriend2.getText().trim().toLowerCase())) {
+                        update.setTitle("Error!");
+                        update.setContentText(
+                                "You entered the same user twice.");
+                        update.showAndWait();
+                        mutualFriend1.clear();
+                        mutualFriend2.clear();
+                        return;
+                    }
+                    
+                    try {
+                        GraphNode friendA = socialNetwork.getGraph()
+                                .search(mutualFriend1.getText().trim().toLowerCase());
+                        GraphNode friendB = socialNetwork.getGraph()
+                                .search(mutualFriend2.getText().trim().toLowerCase());
+                        if (friendA != null) {
+                            if (friendA.getFriends()
+                                    .contains(mutualFriend2.getText().trim().toLowerCase())) {
+                                
+                            }
+                            ArrayList<String> mutualUsers = new ArrayList(friendA.getFriends());
+                            mutualUsers.retainAll(friendB.getFriends());
+                            
+                            ObservableList<String> mutualUsersList = FXCollections
+                                    .observableArrayList();
+                            
+                            mutualUsersList.addAll(mutualUsers);
+                            
+                            mutualFriendsDisplayedList.setItems(mutualUsersList);
+                            
+                            mutualFriendsText.setText("Mutual Friends between " 
+                                    + mutualFriend1.getText().trim().toLowerCase() + " and " 
+                                    + mutualFriend2.getText().trim().toLowerCase()
+                                    + "\nNumber of Mutual Friends: " + mutualUsers.size());
+                        }
 
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        Alert a = new Alert(AlertType.ERROR);
+                        a.show();
+                    }
+                }
+                // Removes text in text fields
+                mutualFriend1.clear();
+                mutualFriend2.clear();
+            }
+        }
+
+        // Displays Mutual friendships if button is pressed or enter is pressed in second
+        // text field.
+        mutualFriend.setOnAction(new MutualFriendship());
+        mutualFriend2.setOnAction(new MutualFriendship());
+       
 ///////////////////////////////////////////////////////////////////////////////
         // CODE TO UPDATE GUI WHEN NAMES IN THE TWO ListView INSTANCES ARE
         // CLICKED ON
@@ -755,7 +857,6 @@ public class Main extends Application {
          * This updates what user is displayed when a friend is clicked in the
          * currents users list of friends
          */
-
         friendList.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent arg0) {
@@ -781,8 +882,6 @@ public class Main extends Application {
                             .search(namesOfFriends.get(indexOfFriend)));
                     createUserDisplay(socialNetwork.getCentralUser(), root,
                             vbox1, hbox);
-                    
-          
                 }
             }
         });
@@ -907,11 +1006,5 @@ public class Main extends Application {
      */
     public static void main(String[] args) {
         launch(args);
-    }
-
-    
-    private Label updateUserLabel(int size) {
-        Label newLabel = new Label("Number of Users: " + size);
-        return newLabel;
     }
 }
