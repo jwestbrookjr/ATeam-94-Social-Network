@@ -291,7 +291,48 @@ public class SocialGraph implements GraphADT{
             return null;
         }
     }
-
+///////////////////////////////////////////////////////////////////////////////
+    
+   /**
+    * Basic depth first search from a vertex in a graph  
+    * All vertices that can be reached from v will be marked visited 
+    * @param v vertex to start at in the graph
+    */
+    
+    private void DFS(GraphNode v) {
+        v.setVisited();
+        ArrayList<String> friends = v.getFriends();
+        for(String f: friends) {
+           GraphNode n = search(f);
+           if(!n.isVisited()) {
+               DFS(n);
+           }
+        }
+        
+    }
+    
+    /**
+     * Call DFS until all vertices are marked as visited 
+     * each time you call DFS add 1 to the number of connected groups 
+     * in the graph 
+     * @return numOfGroups - number of connected groups in the graph
+     */
+    public int numberOfGroups() {
+        int numOfGroups = 0;
+        // Mark all vertices as unvisited 
+        initailizeFields();       
+        // Iterate through list of vertices and call DFS from the vertex if 
+        // it is marked as unvisited 
+        for(GraphNode v: vertices) {
+            if(!v.isVisited()) {
+                numOfGroups++;
+                DFS(v);
+            }               
+        }
+        return numOfGroups;
+    }
+        
+        
 ///////////////////////////////////////////////////////////////////////////////    
     /**
      * Searches for a specified vertex in the graph and returns the 
@@ -339,13 +380,6 @@ public class SocialGraph implements GraphADT{
     }
     
        public static void main(String[] args) {   
-           SocialGraph g = new SocialGraph();
-           g.addEdge("D","E");
-           g.addEdge("G","F");
-           g.addEdge("D", "G");
-           g.addEdge("D", "A");
-           System.out.println(g.getShortestPath("D","E"));
-           System.out.println(g.getShortestPath("A","G"));
 
        }
     
