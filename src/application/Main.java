@@ -1,3 +1,4 @@
+package application;
 ////////////////////////////////////////////////////////////////////////////////
 //
 // Title:           (Main.java)
@@ -5,9 +6,6 @@
 // Course:          (CS 400, Fall, 2019)
 //
 ///////////////////////////////////////////////////////////////////////////////
-
-package application;
-
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
@@ -15,6 +13,7 @@ import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Optional;
+import java.util.Set;
 import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -48,9 +47,8 @@ import javafx.stage.WindowEvent;
 /**
  * Main driver for the GUI application.
  * 
- * @author Sam Peaslee
- * @author Jon Westbrook
- *
+ * @authors Sam Peaslee, Jon Westbrook, Grant Hellenbrand, Alexander Bush, 
+ * Cole Christophel
  */
 public class Main extends Application {
     
@@ -65,7 +63,7 @@ public class Main extends Application {
     ListView<String> friendList = new ListView<String>();
 
     /**
-     * Creates the user's GUI window.
+     * Creates the Hbox that shows the central users name and list of friends
      * 
      * @param centralUser - user of type GraphNode.
      * @param root        - base BorderPane
@@ -124,40 +122,8 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception {
 
-        ///////////////////////////////////////////////////////////////////////
-        Alert open = new Alert(AlertType.NONE, "Currently all the buttons are "
-                + "functional. You will be prompted to save a file or not when "
-                + "the GUI is exited.", ButtonType.OK);
-        open.setTitle("A2 Message");
-        open.showAndWait();
-        ///////////////////////////////////////////////////////////////////////
-        // INITIALIZING A BUNCH OF OBJECTS THAT ARE NEEDED TO CREATE THE GUI
-
-        /*
-         * On initial loading of the GUI the two lists below will be empty and
-         * will not display the ObservableList that will hold all the users'
-         * names in the current Social Network.
-         */
-        ObservableList<String> allUserNames = FXCollections
-                .observableArrayList();
-        // ListView is used to display user names in the GUI; also has built in
-        // behavior that makes items of list clickable.
-        ListView<String> allUserList = new ListView<String>();
-        // Sets the max width and height of the list.
-        allUserList.setMaxSize(100, 150);
-        
-        /*
-         * These Lists are used to display the names of every user currently in the 
-         * graph. On the click of a name, selected user becomes the central user.
-         */
-        ObservableList<String> allUserNamesDisplayed = FXCollections
-                .observableArrayList();
-        ListView<String> allUsersDisplayedList = new ListView<String>();
-        allUsersDisplayedList.setMaxSize(200, 125);
-        allUsersDisplayedList.setItems(allUserNamesDisplayed);
-        Text numOfUsersDisplayed = new Text("Number of Users: "+  allUserNamesDisplayed.size());
-/////////////////////////////////////////////////////////////////////////////////
-         
+///////////////////////////////////////////////////////////////////////////////
+        // INITIALIZING A BUNCH OF OBJECTS THAT ARE NEEDED TO CREATE THE GUI  
         // Pane used to construct the layout of the GUI.
         BorderPane root = new BorderPane();
         // Sets padding of items around border of the GUI window: top, right,
@@ -165,9 +131,21 @@ public class Main extends Application {
         root.setPadding(new Insets(20, 20, 60, 20));
         root.setBackground(new Background(
                 new BackgroundFill(Color.DARKOLIVEGREEN, null, null)));
-
-        // Adds an icon to the GUI.
+        
+        // ObservableList/ListView combo for displaying all users 
+        ObservableList<String> allUserNamesDisplayed = FXCollections
+                .observableArrayList();
+        ListView<String> allUsersDisplayedList = new ListView<String>();
+        allUsersDisplayedList.setMaxSize(200, 125);
+        allUsersDisplayedList.setItems(allUserNamesDisplayed);
+        Text numOfUsersDisplayed = new Text("Number of Users: "+  allUserNamesDisplayed.size());
+        
+        
+        // ObservableList/ListView combo for displaying mutual friends of two users
+        ObservableList<String> mutualUsersList = FXCollections
+            .observableArrayList();
         ListView<String> mutualFriendsDisplayedList = new ListView<String>();
+        mutualFriendsDisplayedList.setItems(mutualUsersList);
         mutualFriendsDisplayedList.setMaxSize(200, 125);
         
         Text mutualFriendsText = new Text("Mutual Friends");
@@ -175,6 +153,7 @@ public class Main extends Application {
         mutualFriendsVBox.getChildren().addAll(mutualFriendsText, mutualFriendsDisplayedList);
         mutualFriendsVBox.setSpacing(10);
         VBox imageBox = new VBox();
+
         /*
         try {
             Image highFive = new Image("application/highfive.png");
@@ -186,9 +165,11 @@ public class Main extends Application {
         }
         */ 
        
-        imageBox.getChildren().addAll(mutualFriendsVBox, numOfUsersDisplayed, allUsersDisplayedList);
+        Button clearSN = new Button("Clear Socail Network");    
+        imageBox.getChildren().addAll(mutualFriendsVBox, numOfUsersDisplayed, 
+            allUsersDisplayedList, clearSN);
         imageBox.setSpacing(10);
-    //    mutualFriendsVBox.setVisible(false);
+
         root.setRight(imageBox);
         
 
@@ -284,16 +265,6 @@ public class Main extends Application {
                                 vbox1, hbox);
 
                     } else {
-                        // If no central users set, display a list of all users.
-                        // Clear ObservableList then add all user names in
-                        // the social network. Clear all names first so they
-                        // don't show up twice.
-                        allUserNames.removeAll(
-                                socialNetwork.getGraph().getAllUsers());
-                        allUserNames
-                                .addAll(socialNetwork.getGraph().getAllUsers());
-                        allUserList.setItems(allUserNames);
-                        // No longer needed root.setCenter(allUserList);
                         
                     }
                     allUserNamesDisplayed
@@ -409,10 +380,6 @@ public class Main extends Application {
         /**
          * Event class which adds a user to the social network based on a GUI
          * action.
-         * 
-         * @author Sam Peaslee
-         * @author Jon Westbrook
-         *
          */
         class RegisterAction implements EventHandler<ActionEvent> {
             @Override
@@ -449,9 +416,8 @@ public class Main extends Application {
                             
                         }
                         // Update the ObservableList containing all users.
-                        if (!allUserNames.contains(addUser.getText().trim().toLowerCase())) {
-                            allUserNames.add(addUser.getText().trim().toLowerCase());
-                            allUserNamesDisplayed.add(addUser.getText().trim().toLowerCase());
+                      if (!allUserNamesDisplayed.contains(addUser.getText().trim().toLowerCase())) {
+                          allUserNamesDisplayed.add(addUser.getText().trim().toLowerCase());
                         }
 
                     } catch (Exception e) {
@@ -506,8 +472,7 @@ public class Main extends Application {
                         }
                         // Updating the ObservableList allUserNames
                         // in the GUI if necessary.
-                        if (allUserNames.contains(removeUser.getText().trim().toLowerCase())) {
-                            allUserNames.remove(removeUser.getText().trim().toLowerCase());
+                       if (allUserNamesDisplayed .contains(removeUser.getText().trim().toLowerCase())) {              
                             allUserNamesDisplayed.remove(removeUser.getText().trim().toLowerCase());
                         }
                         // If the current list of friends being displayed
@@ -596,12 +561,11 @@ public class Main extends Application {
 
                         // Updating the ObservableList allUserNames
                         // in the GUI if necessary.
-                        if (!allUserNames.contains(addFriend1.getText().trim().toLowerCase())) {
-                            allUserNames.add(addFriend1.getText().trim().toLowerCase());
+                       if (!allUserNamesDisplayed.contains(addFriend1.getText().trim().toLowerCase())) {
+                       
                             allUserNamesDisplayed.add(addFriend1.getText().trim().toLowerCase());
                         }
-                        if (!allUserNames.contains(addFriend2.getText().trim().toLowerCase())) {
-                            allUserNames.add(addFriend2.getText().trim().toLowerCase());
+                        if (!allUserNamesDisplayed.contains(addFriend2.getText().trim().toLowerCase())) {     
                             allUserNamesDisplayed.add(addFriend2.getText().trim().toLowerCase());
                         }
                         // If either user in the new friendship is currently
@@ -675,10 +639,6 @@ public class Main extends Application {
 
         /**
          * Class which implements the functionality to remove friendships.
-         * 
-         * @author Sam Peaslee
-         * @author Jon Westbrook
-         *
          */
         class RemoveFriendship implements EventHandler<ActionEvent> {
             @Override
@@ -735,14 +695,6 @@ public class Main extends Application {
                             return;
                         }
 
-                        // Updating the ObservableList allUserNames
-                        // in the GUI if necessary.
-                        if (!allUserNames.contains(removeFriend1.getText().trim().toLowerCase())) {
-                            allUserNames.add(removeFriend1.getText().trim().toLowerCase());
-                        }
-                        if (!allUserNames.contains(removeFriend2.getText().trim().toLowerCase())) {
-                            allUserNames.add(removeFriend2.getText().trim().toLowerCase());
-                        }
                         // If either user in the friendship removed is currently
                         // the central user (user being displayed),
                         // updates the list of friends being displayed.
@@ -783,10 +735,6 @@ public class Main extends Application {
 ///////////////////////////////////////////////////////////////////////////////
         /**
          * Class which implements the functionality to display mutual friendships.
-         * 
-         * @author Grant Hellenbrand
-         * @author Alexander Bush
-         *
          */
         class MutualFriendship implements EventHandler<ActionEvent> {
             @Override
@@ -811,21 +759,16 @@ public class Main extends Application {
                                 .search(mutualFriend1.getText().trim().toLowerCase());
                         GraphNode friendB = socialNetwork.getGraph()
                                 .search(mutualFriend2.getText().trim().toLowerCase());
-                        if (friendA != null) {
+                        if (friendA != null & friendB != null) {
                             if (friendA.getFriends()
                                     .contains(mutualFriend2.getText().trim().toLowerCase())) {
                                 
                             }
-                            ArrayList<String> mutualUsers = new ArrayList(friendA.getFriends());
+                            //Clear list of mutual friends currently displayed 
+                            mutualUsersList.clear();
+                            ArrayList<String> mutualUsers = new ArrayList<String>(friendA.getFriends());
                             mutualUsers.retainAll(friendB.getFriends());
-                            
-                            ObservableList<String> mutualUsersList = FXCollections
-                                    .observableArrayList();
-                            
-                            mutualUsersList.addAll(mutualUsers);
-                            
-                            mutualFriendsDisplayedList.setItems(mutualUsersList);
-                            
+                            mutualUsersList.addAll(mutualUsers);                  
                             mutualFriendsText.setText("Mutual Friends between " 
                                     + mutualFriend1.getText().trim().toLowerCase() + " and " 
                                     + mutualFriend2.getText().trim().toLowerCase()
@@ -848,6 +791,48 @@ public class Main extends Application {
         // text field.
         mutualFriend.setOnAction(new MutualFriendship());
         mutualFriend2.setOnAction(new MutualFriendship());
+///////////////////////////////////////////////////////////////////////////////
+        // CLEAR SOCIAL NETWORK
+        ButtonType clear = new ButtonType("I'm Sure");
+        ButtonType noClear = new ButtonType("Changed My Mind");
+        Alert makeSure = new Alert(AlertType.NONE,
+            "Are you sure you want to clear the social network", clear, noClear);
+
+        // EventHandler instance clear the Social Network
+        EventHandler<ActionEvent> clearSocialNetwork = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent arg0) {
+                // Alert gui user to make sure they want to clear the Social Network
+                Optional<ButtonType> result = makeSure.showAndWait();
+                if (result.orElse(clear) == clear) {
+                    Set<String> allUsers = socialNetwork.getGraph().allUserNames;
+                    // Updating the log file since every user is being removed
+                    for (String user : allUsers) {
+                        String[] cmd = {"r", user};
+                        try {
+                            socialNetwork.updateLogFile(cmd, logFW);
+                        } catch (Exception e) {
+
+                        }
+                    }
+                    // Setting the socialNetworks graph to new empty graph
+                    SocialGraph newGraph = new SocialGraph();
+                    socialNetwork.setGraph(newGraph);
+                    // Delete all users currently stored in the ObservableLists
+                    allUserNamesDisplayed.clear();
+                    mutualUsersList.clear();
+                    // Resetting the mutual friend text
+                    mutualFriendsText.setText("Mutual Friends");
+                    // Setting the center to a new label
+                    root.setCenter(new Label("Socail Network Cleared"));
+
+                }
+            }
+
+        };
+
+
+        clearSN.setOnAction(clearSocialNetwork);
        
 ///////////////////////////////////////////////////////////////////////////////
         // CODE TO UPDATE GUI WHEN NAMES IN THE TWO ListView INSTANCES ARE
@@ -880,28 +865,6 @@ public class Main extends Application {
                     }
                     socialNetwork.setCentralUser(socialNetwork.getGraph()
                             .search(namesOfFriends.get(indexOfFriend)));
-                    createUserDisplay(socialNetwork.getCentralUser(), root,
-                            vbox1, hbox);
-                }
-            }
-        });
-
-        /*
-         * This updates what user is displayed when a name is clicked in the
-         * list that contains all users
-         */
-        allUserList.setOnMouseClicked(new EventHandler<MouseEvent>() {
-            @Override
-            public void handle(MouseEvent arg0) {
-                // Same logic as EventHandler for friendList above.
-                int indexOfFriend = allUserList.getSelectionModel()
-                        .getSelectedIndex();
-                if (indexOfFriend < 0) {
-                } else {
-                    hbox.getChildren().clear();
-                    vbox1.getChildren().clear();
-                    socialNetwork.setCentralUser(socialNetwork.getGraph()
-                            .search(allUserNames.get(indexOfFriend)));
                     createUserDisplay(socialNetwork.getCentralUser(), root,
                             vbox1, hbox);
                 }
