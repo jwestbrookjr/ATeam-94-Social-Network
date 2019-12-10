@@ -52,7 +52,7 @@ import javafx.stage.WindowEvent;
  */
 public class Main extends Application {
     private static final int WINDOW_WIDTH = 1024;
-    private static final int WINDOW_HEIGHT = 700;
+    private static final int WINDOW_HEIGHT = 650;
     // Create a SocialNetwork Instance
     SocialNetwork socialNetwork = new SocialNetwork();
 
@@ -61,6 +61,24 @@ public class Main extends Application {
     // Used to display the list of friends and makes them clickable.
     ListView<String> friendList = new ListView<String>();
 
+/////////////////////////////////////////////////////////////////////////////////////////
+// This section holds all of the current Styles for the program
+    String cssLeftPanelLayout = 
+            "-fx-background-color: #85C8F2;\n" +
+            "-fx-background-radius: 10 10 10 10;\n" +
+            "-fx-effect: dropshadow(three-pass-box, #2A558C, 20, 0, 0, 0);";
+
+    String cssMainBorderLayout = 
+            "-fx-background-color: #D9D9D9;\n" ;
+
+    String cssTextStyle =
+            "-fx-font-family: \"Verdana\";\n" +
+            "-fx-font-size: 14;\n";
+    String cssTitleStyle =
+            "-fx-font-family: \"Verdana\";\n" +
+            "-fx-font-size: 20;\n";
+
+//////////////////////////////////////////////////////////////////////////////////////////
     /**
      * Creates the Hbox that shows the central users name and list of friends
      * 
@@ -79,7 +97,7 @@ public class Main extends Application {
             ArrayList<String> friends = centralUser.getFriends();
             // Get the user name of the centralUser.
             Text currentUser = new Text(centralUser.getUserName());
-            currentUser.setFont(new Font("Arial", 14));
+            currentUser.setStyle(cssTextStyle);
             // Add currentUser to the VBox.
             vbox.getChildren().add(currentUser);
             vbox.setSpacing(10);
@@ -87,7 +105,7 @@ public class Main extends Application {
             // Create a label.
             Label userLabel = new Label(
                 "" + centralUser.getUserName() + " has " + centralUser.getFriends().size() +  " friends:");
-            userLabel.setFont(new Font("Arial", 14));
+            userLabel.setStyle(cssTextStyle);
             // Add label to the HBox.
             hbox.getChildren().add(userLabel);
 
@@ -127,21 +145,24 @@ public class Main extends Application {
         BorderPane root = new BorderPane();
        
         Label title =  new Label("BadgerNetBook");
-        Text topT = new Text("There are currently " + socialNetwork.getGraph().order()
-            + " users.\n" + "There are currently " + socialNetwork.getGraph().size()
-            + " friendships.\n" + "There are currently " + socialNetwork.getGraph().numberOfGroups()+" connected groups.");
-        VBox topV = new VBox();
-        topV.getChildren().addAll(title,topT);
-        topV.setAlignment(Pos.CENTER);      
-        root.setTop(topV);
+        title.setStyle(cssTitleStyle);
+        title.setPadding(new Insets(5));
+        Text topT = new Text("Network consists of: " + socialNetwork.getGraph().order()
+                + " Users, " + socialNetwork.getGraph().size() + " friendships, and " 
+                + socialNetwork.getGraph().numberOfGroups()+" connected groups.\n");
+        topT.setStyle(cssTextStyle);
+     
+        VBox topVBox = new VBox();
+        topVBox.getChildren().addAll(title,topT);
+        topVBox.setAlignment(Pos.CENTER);      
+        root.setTop(topVBox);
 
 
         
         // Sets padding of items around border of the GUI window: top, right,
         // bottom, left.
         root.setPadding(new Insets(20, 20, 60, 20));
-        root.setBackground(new Background(
-                new BackgroundFill(Color.DARKOLIVEGREEN, null, null)));
+        root.setStyle(cssMainBorderLayout);
         
         // ObservableList/ListView combo for displaying all users 
         ObservableList<String> allUserNamesDisplayed = FXCollections
@@ -149,8 +170,8 @@ public class Main extends Application {
         ListView<String> allUsersDisplayedList = new ListView<String>();
         allUsersDisplayedList.setMaxSize(200, 125);
         allUsersDisplayedList.setItems(allUserNamesDisplayed);
-        Text numOfUsersDisplayed = new Text("Number of Users: "+  allUserNamesDisplayed.size());
-        
+        Text numOfUsersDisplayed = new Text("Users In Network");
+        numOfUsersDisplayed.setStyle(cssTextStyle);
         
         // ObservableList/ListView combo for displaying mutual friends of two users
         ObservableList<String> mutualUsersList = FXCollections
@@ -160,23 +181,17 @@ public class Main extends Application {
         mutualFriendsDisplayedList.setMaxSize(200, 125);
         
         Text mutualFriendsText = new Text("Mutual Friends");
+        mutualFriendsText.setStyle(cssTextStyle);
         VBox mutualFriendsVBox = new VBox();
         mutualFriendsVBox.getChildren().addAll(mutualFriendsText, mutualFriendsDisplayedList);
         mutualFriendsVBox.setSpacing(10);
+        
         VBox imageBox = new VBox();
+        imageBox.setStyle(cssLeftPanelLayout);
+        imageBox.setPadding(new Insets(10));
 
-        /*
-        try {
-            Image highFive = new Image("application/highfive.png");
-            ImageView iconPlace = new ImageView(highFive);
-            imageBox.getChildren().addAll(iconPlace);
-        } catch (Exception e) {
-            System.out.println(System.getProperty("user.dir"));
-            System.out.println(e.getMessage());
-        }
-        */ 
        
-        Button clearSN = new Button("Clear Socail Network");  
+        Button clearSN = new Button("Clear Social Network");  
         imageBox.getChildren().addAll(mutualFriendsVBox, numOfUsersDisplayed, 
             allUsersDisplayedList, clearSN);
         imageBox.setSpacing(10);
@@ -227,7 +242,7 @@ public class Main extends Application {
         FileChooser fileChooser = new FileChooser();
         Button fileButton = new Button("Upload File");
         Label fileAdd = new Label("Select file to update the Social Network.");
-        fileAdd.setFont(new Font("Arial", 14));
+        fileAdd.setStyle(cssTextStyle);
 
         fileBox.getChildren().addAll(fileAdd, fileButton);
 
@@ -249,9 +264,9 @@ public class Main extends Application {
                         newSN.createSocialNetWork(file);
                         socialNetwork.createSocialNetWork(file);
                         socialNetwork.updateLogFile(file,logFW );
-                        topT.setText("There are currently " + socialNetwork.getGraph().order()
-                            + " users.\n" + "There are currently " + socialNetwork.getGraph().size()
-                            + " friendships.\n" + "There are currently " + socialNetwork.getGraph().numberOfGroups()+".");
+                        topT.setText("Network consists of: " + socialNetwork.getGraph().order()
+                               + " Users, " + socialNetwork.getGraph().size() + " friendships, and " 
+                               + socialNetwork.getGraph().numberOfGroups()+" connected groups.\n");
                     } catch (Exception ex) {
                         // Displays an alert that tells the user their
                         // file was not valid.
@@ -284,7 +299,7 @@ public class Main extends Application {
                     allUserNamesDisplayed
                             .addAll(socialNetwork.getGraph().getAllUsers());
                     allUsersDisplayedList.setItems(allUserNamesDisplayed);
-                    numOfUsersDisplayed.setText("Number of Users: "+  allUserNamesDisplayed.size());
+                   // numOfUsersDisplayed.setText("Users In Network");
                     root.setRight(imageBox);
                 }
             }
@@ -309,32 +324,33 @@ public class Main extends Application {
         VBox vbox2 = new VBox();
         vbox2.setPadding(new Insets(10));
         vbox2.setSpacing(10);
+        vbox2.setStyle(cssLeftPanelLayout);
 
         Button addUserBTN = new Button("Add User");
-        Label addUserLabel = new Label("Add user:");
-        addUserLabel.setFont(new Font("Arial", 14));
+        Label addUserLabel = new Label("Add User:");
+        addUserLabel.setStyle(cssTextStyle);
         TextField addUser = new TextField();
         // Clears the TextField when a user clicks on it with a
         // mouse.
         addUser.setMaxWidth(100);
 
         Button removeUserBTN = new Button("Remove User");
-        Label removeUserLabel = new Label("Remove user:");
-        removeUserLabel.setFont(new Font("Arial", 14));
+        Label removeUserLabel = new Label("Remove User:");
+        removeUserLabel.setStyle(cssTextStyle);
         TextField removeUser = new TextField();
 
         removeUser.setMaxWidth(100);
 
         Button setCentralUser = new Button("Set Central User");
-        Label setCentralLabel = new Label("View user:");
-        setCentralLabel.setFont(new Font("Arial", 14));
+        Label setCentralLabel = new Label("View User:");
+        setCentralLabel.setStyle(cssTextStyle);
         TextField setUser = new TextField();
 
         setUser.setMaxWidth(100);
 
         Button addFriendship = new Button("Add Friendship");
-        Label addFriendLabel = new Label("Add friendship:");
-        addFriendLabel.setFont(new Font("Arial", 14));
+        Label addFriendLabel = new Label("Add Friendship:");
+        addFriendLabel.setStyle(cssTextStyle);
         TextField addFriend1 = new TextField();
 
         TextField addFriend2 = new TextField();
@@ -346,8 +362,8 @@ public class Main extends Application {
         friendBox.getChildren().addAll(addFriend1, addFriend2);
 
         Button removeFriend = new Button("Remove Friendship");
-        Label removeLabel = new Label("Remove friendship:");
-        removeLabel.setFont(new Font("Arial", 14));
+        Label removeLabel = new Label("Remove Friendship:");
+        removeLabel.setStyle(cssTextStyle);
         TextField removeFriend1 = new TextField();
         TextField removeFriend2 = new TextField();
 
@@ -369,8 +385,8 @@ public class Main extends Application {
         addRemoveBox.getChildren().addAll(addUserVBox,removeUserVBox);
         
         Button mutualFriend = new Button("List Mutual Friends");
-        Label mutualLabel = new Label("List Mutual Friends");
-        mutualLabel.setFont(new Font("Arial", 14));
+        Label mutualLabel = new Label("List Mutual Friends:");
+        mutualLabel.setStyle(cssTextStyle);
         TextField mutualFriend1 = new TextField();
         TextField mutualFriend2 = new TextField();
         mutualFriend1.setMaxWidth(100);
@@ -383,6 +399,7 @@ public class Main extends Application {
                 setCentralLabel,setUser, setCentralUser, addFriendLabel, friendBox,
                 addFriendship, removeLabel, removeBox, removeFriend, mutualLabel,
                 mutualFriendBox, mutualFriend);
+        vbox2.setStyle(cssLeftPanelLayout);
         root.setLeft(vbox2);
 
         // A pop up window to let the user of the GUI know if their attempt
@@ -424,9 +441,9 @@ public class Main extends Application {
                             update.setTitle("User Added");
                             update.setContentText("User " + addUser.getText().trim().toLowerCase()
                                     + " added to Social Network.");
-                            topT.setText("There are currently " + socialNetwork.getGraph().order()
-                                + " users.\n" + "There are currently " + socialNetwork.getGraph().size()
-                                + " friendships.\n" + "There are currently " + socialNetwork.getGraph().numberOfGroups()+".");
+                            topT.setText("Network consists of: " + socialNetwork.getGraph().order()
+                               + " Users, " + socialNetwork.getGraph().size() + " friendships, and " 
+                                + socialNetwork.getGraph().numberOfGroups()+" connected groups.\n");
                             update.showAndWait();
                             //Add command to the log file 
                             socialNetwork.updateLogFile(words, logFW);
@@ -440,7 +457,7 @@ public class Main extends Application {
                     } catch (Exception e) {
                         System.out.println(e.getMessage());
                     }
-                    numOfUsersDisplayed.setText("Number of Users: "+  allUserNamesDisplayed.size());
+                    //numOfUsersDisplayed.setText("Number of Users: "+  allUserNamesDisplayed.size());
                 }
                 addUser.clear();
             }
@@ -476,9 +493,9 @@ public class Main extends Application {
                             update.setTitle("User Removed");
                             update.setContentText(removeUser.getText().trim().toLowerCase()
                                     + " removed from the Social Network.");
-                            topT.setText("There are currently " + socialNetwork.getGraph().order()
-                                + " users.\n" + "There are currently " + socialNetwork.getGraph().size()
-                                + " friendships.\n" + "There are currently " + socialNetwork.getGraph().numberOfGroups()+".");
+                            topT.setText("Network consists of: " + socialNetwork.getGraph().order()
+                               + " Users, " + socialNetwork.getGraph().size() + " friendships, and " 
+                                + socialNetwork.getGraph().numberOfGroups()+" connected groups.\n");
                             update.showAndWait();
                             //Add command to the log file 
                             socialNetwork.updateLogFile(words, logFW);
@@ -509,7 +526,7 @@ public class Main extends Application {
                         }
                     } catch (Exception e) {
                     }
-                    numOfUsersDisplayed.setText("Number of Users: "+  allUserNamesDisplayed.size()); 
+                    //numOfUsersDisplayed.setText("Number of Users: "+  allUserNamesDisplayed.size()); 
                 }
                 removeUser.clear();
             }
@@ -574,9 +591,9 @@ public class Main extends Application {
                             update.setContentText(addFriend1.getText().trim().toLowerCase() + " and "
                                     + addFriend2.getText().trim().toLowerCase()
                                     + " are now friends.");
-                            topT.setText("There are currently " + socialNetwork.getGraph().order()
-                                + " users.\n" + "There are currently " + socialNetwork.getGraph().size()
-                                + " friendships.\n" + "There are currently " + socialNetwork.getGraph().numberOfGroups()+".");
+                            topT.setText("Network consists of: " + socialNetwork.getGraph().order()
+                               + " Users, " + socialNetwork.getGraph().size() + " friendships, and " 
+                                + socialNetwork.getGraph().numberOfGroups()+" connected groups.\n");
                             update.showAndWait();
                             //Add command to the log file 
                             socialNetwork.updateLogFile(words, logFW);
@@ -612,7 +629,7 @@ public class Main extends Application {
                         }
                     } catch (Exception e) {
                     }
-                    numOfUsersDisplayed.setText("Number of Users: "+  allUserNamesDisplayed.size());
+                    //numOfUsersDisplayed.setText("Number of Users: "+  allUserNamesDisplayed.size());
                 }
                 addFriend1.clear();
                 addFriend2.clear();
@@ -699,9 +716,9 @@ public class Main extends Application {
                                 update.setContentText(removeFriend1.getText().trim().toLowerCase()
                                         + " and " + removeFriend2.getText().trim().toLowerCase()
                                         + " are no longer friends.");
-                                topT.setText("There are currently " + socialNetwork.getGraph().order()
-                                    + " users.\n" + "There are currently " + socialNetwork.getGraph().size()
-                                    + " friendships.\n" + "There are currently " + socialNetwork.getGraph().numberOfGroups()+".");
+                                topT.setText("Network consists of: " + socialNetwork.getGraph().order()
+                               + " Users, " + socialNetwork.getGraph().size() + " friendships, and " 
+                               + socialNetwork.getGraph().numberOfGroups()+" connected groups.\n");
                                 update.showAndWait();
                                 //Add command to the log file 
                                 socialNetwork.updateLogFile(words, logFW);
@@ -824,7 +841,7 @@ public class Main extends Application {
         Alert makeSure = new Alert(AlertType.NONE,
             "Are you sure you want to clear the social network", clear, noClear);
         
-        Alert isCleared = new Alert(AlertType.NONE,"Socail Network Cleared!!!",ButtonType.OK );
+        Alert isCleared = new Alert(AlertType.NONE,"Social Network Cleared!!!",ButtonType.OK );
 
         // EventHandler instance clear the Social Network
         EventHandler<ActionEvent> clearSocialNetwork = new EventHandler<ActionEvent>() {
@@ -854,9 +871,10 @@ public class Main extends Application {
                     //clear the current central user 
                     socialNetwork.setCentralUser(null);
                     // Setting the center to a new label
-                    topT.setText("There are currently " + socialNetwork.getGraph().order()
-                        + " users.\n" + "There are currently " + socialNetwork.getGraph().size()
-                        + " friendships.\n" + "There are currently " + socialNetwork.getGraph().numberOfGroups()+".");
+                    topT.setText("Network consists of: " + socialNetwork.getGraph().order()
+                            + " Users, " + socialNetwork.getGraph().size() + " friendships, and " 
+                            + socialNetwork.getGraph().numberOfGroups()+" connected groups.\n");
+                    
                     root.setCenter(new Label(""));
                     
                     isCleared.showAndWait();
@@ -874,7 +892,7 @@ public class Main extends Application {
     
         Button shortestPathBTN = new Button("View");
         Label  shortestPathL= new Label("Get Shortest Path");
-        shortestPathL.setFont(new Font("Arial", 14));
+        shortestPathL.setStyle(cssTextStyle);
         TextField shortestPathFriend1 = new TextField();
         TextField shortestPathFriend2 = new TextField();
         
@@ -884,8 +902,8 @@ public class Main extends Application {
         HBox shortestPathFriendBox = new HBox();
         shortestPathFriendBox.setSpacing(5);
         shortestPathFriendBox.getChildren().addAll(shortestPathFriend1, shortestPathFriend2);
-        imageBox.getChildren().addAll(shortestPathL, shortestPathBTN, 
-            shortestPathFriendBox);
+        imageBox.getChildren().addAll(shortestPathL, shortestPathFriendBox,
+                shortestPathBTN);
         
         
         
