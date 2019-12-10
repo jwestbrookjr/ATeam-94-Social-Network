@@ -3,8 +3,8 @@ package application;
 /**
  * Exception class for invalid input file format.
  * 
- * @author Sam Peaslee
- * @author Jon Westbrook
+ * @author Sam Peaslee, Jon Westbrook, Grant Hellenbrand, Alex Bush, Cole
+ *         Christophel
  *
  */
 @SuppressWarnings("serial")

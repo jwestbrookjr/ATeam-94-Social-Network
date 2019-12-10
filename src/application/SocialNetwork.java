@@ -12,10 +12,11 @@ import java.io.UnsupportedEncodingException;
 /**
  * Class which represents a social network.
  * 
- * @author Sam Peaslee
+ * @author Sam Peaslee, Grant Hellenbrand, Alex Bush, Cole Christophel, Jon
+ *         Westbrook
  *
  */
-public class SocialNetwork implements SocialNetworkADT{
+public class SocialNetwork implements SocialNetworkADT {
 
 	// Graph that hold users in the SocialNetwork.
 	private SocialGraph graph;
@@ -25,8 +26,6 @@ public class SocialNetwork implements SocialNetworkADT{
 
 	/**
 	 * Constructor to create a SocialNetwork object.
-	 * 
-	 * @param inputFile- name of input file
 	 */
 	public SocialNetwork() {
 		graph = new SocialGraph();
@@ -69,11 +68,11 @@ public class SocialNetwork implements SocialNetworkADT{
 
 	/**
 	 * Parses the contents of the input file to create a SocialNetWork. Stores
-	 * users in a graph depending on the contents of the input file
+	 * users in a graph depending on the contents of the input file.
 	 * 
 	 * @throws InvalidInputFileFormatException - if input file does not valid
-	 *                                         format
-	 * @throws FileNotFoundException           - if file is not found
+	 *                                         format.
+	 * @throws FileNotFoundException           - if file is not found.
 	 */
 	public void createSocialNetWork(File inputFile)
 			throws InvalidInputFileFormatException, FileNotFoundException {
@@ -128,7 +127,7 @@ public class SocialNetwork implements SocialNetworkADT{
 			}
 		} else if (command.equals("s")) {
 			if (cmdLine.length == 2) {
-			//	System.out.println(cmdLine[1]);
+				// System.out.println(cmdLine[1]);
 				setCentralUser(graph.search(cmdLine[1]));
 			} else {
 				throw new InvalidInputFileFormatException();
@@ -138,51 +137,49 @@ public class SocialNetwork implements SocialNetworkADT{
 		}
 	}
 
-	
-	
-    /**
-     * Copies contents of a text file line by line 
-     * too the log file. Used when a file is used to update the Social Network
-     * @param inputFile
-     * @param log
-     * @throws IOException
-     */
-    public void updateLogFile(File inputFile, FileWriter log) throws IOException {
-        // Copy contents of input file to log file
-        Scanner scn = new Scanner(inputFile);
-        while (scn.hasNextLine()) {
-            log.write(scn.nextLine() + "\n");
-        }
-        scn.close();
+	/**
+	 * Copies contents of a text file line by line to the log file. Used when a
+	 * file is used to update the Social Network.
+	 * 
+	 * @param inputFile - input file to parse.
+	 * @param log       - new log file created.
+	 * @throws IOException - if any error occurs retrieving a file.
+	 */
+	public void updateLogFile(File inputFile, FileWriter log)
+			throws IOException {
+		// Copy contents of input file to log file
+		Scanner scn = new Scanner(inputFile);
+		while (scn.hasNextLine()) {
+			log.write(scn.nextLine() + "\n");
+		}
+		scn.close();
 
-    }
-    
-    
-    /**
-     * When the SocialNetwork is updated by someone using the GUI add the 
-     * command they used to update the SocialNetwork to the log file 
-     * Example:
-     *      new user SAM was added to the SocialNetwork
-     *      the line "a sam" should be added to the log file 
-     * @param update
-     * @param log
-     * @throws IOException
-     */
-    public void updateLogFile(String[] update, FileWriter log) throws IOException {
-        String line = "";
-        for(int i = 0; i < update.length; i++) {
-            if(i == 0) {
-                line = update[i];
-            }else if(i  == update.length - 1) {
-                line = line+ " " +update[i] + "\n";
-            }else {
-                line = line + " " + update[i];
-            }
-        }        
-        log.write(line);        
-    }
-	
-	
+	}
+
+	/**
+	 * When the SocialNetwork is updated by someone using the GUI, add the
+	 * command they used to update the SocialNetwork to the log file. Example:
+	 * new user SAM was added to the SocialNetwork. The line "a sam" should be
+	 * added to the log file.
+	 * 
+	 * @param update - updates to add to the log.
+	 * @param log    - log to write log information in.
+	 * @throws IOException - if any error occurs retrieving a file.
+	 */
+	public void updateLogFile(String[] update, FileWriter log)
+			throws IOException {
+		String line = "";
+		for (int i = 0; i < update.length; i++) {
+			if (i == 0) {
+				line = update[i];
+			} else if (i == update.length - 1) {
+				line = line + " " + update[i] + "\n";
+			} else {
+				line = line + " " + update[i];
+			}
+		}
+		log.write(line);
+	}
 
 	/**
 	 * Main method for testing and debugging only.
