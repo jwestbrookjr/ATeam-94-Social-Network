@@ -51,9 +51,8 @@ import javafx.stage.WindowEvent;
  * Cole Christophel
  */
 public class Main extends Application {
-    
     private static final int WINDOW_WIDTH = 1024;
-    private static final int WINDOW_HEIGHT = 600;
+    private static final int WINDOW_HEIGHT = 700;
     // Create a SocialNetwork Instance
     SocialNetwork socialNetwork = new SocialNetwork();
 
@@ -87,7 +86,7 @@ public class Main extends Application {
 
             // Create a label.
             Label userLabel = new Label(
-                    "" + centralUser.getUserName() + "'s friends:");
+                "" + centralUser.getUserName() + " has " + centralUser.getFriends().size() +  " friends:");
             userLabel.setFont(new Font("Arial", 14));
             // Add label to the HBox.
             hbox.getChildren().add(userLabel);
@@ -126,6 +125,18 @@ public class Main extends Application {
         // INITIALIZING A BUNCH OF OBJECTS THAT ARE NEEDED TO CREATE THE GUI  
         // Pane used to construct the layout of the GUI.
         BorderPane root = new BorderPane();
+       
+        Label title =  new Label("BadgerNetBook");
+        Text topT = new Text("There are currently " + socialNetwork.getGraph().order()
+            + " users.\n" + "There are currently " + socialNetwork.getGraph().size()
+            + " friendships.\n" + "There are currently " + socialNetwork.getGraph().numberOfGroups()+" connected groups.");
+        VBox topV = new VBox();
+        topV.getChildren().addAll(title,topT);
+        topV.setAlignment(Pos.CENTER);      
+        root.setTop(topV);
+
+
+        
         // Sets padding of items around border of the GUI window: top, right,
         // bottom, left.
         root.setPadding(new Insets(20, 20, 60, 20));
@@ -165,7 +176,7 @@ public class Main extends Application {
         }
         */ 
        
-        Button clearSN = new Button("Clear Socail Network");    
+        Button clearSN = new Button("Clear Socail Network");  
         imageBox.getChildren().addAll(mutualFriendsVBox, numOfUsersDisplayed, 
             allUsersDisplayedList, clearSN);
         imageBox.setSpacing(10);
@@ -238,6 +249,9 @@ public class Main extends Application {
                         newSN.createSocialNetWork(file);
                         socialNetwork.createSocialNetWork(file);
                         socialNetwork.updateLogFile(file,logFW );
+                        topT.setText("There are currently " + socialNetwork.getGraph().order()
+                            + " users.\n" + "There are currently " + socialNetwork.getGraph().size()
+                            + " friendships.\n" + "There are currently " + socialNetwork.getGraph().numberOfGroups()+".");
                     } catch (Exception ex) {
                         // Displays an alert that tells the user their
                         // file was not valid.
@@ -410,6 +424,9 @@ public class Main extends Application {
                             update.setTitle("User Added");
                             update.setContentText("User " + addUser.getText().trim().toLowerCase()
                                     + " added to Social Network.");
+                            topT.setText("There are currently " + socialNetwork.getGraph().order()
+                                + " users.\n" + "There are currently " + socialNetwork.getGraph().size()
+                                + " friendships.\n" + "There are currently " + socialNetwork.getGraph().numberOfGroups()+".");
                             update.showAndWait();
                             //Add command to the log file 
                             socialNetwork.updateLogFile(words, logFW);
@@ -459,6 +476,9 @@ public class Main extends Application {
                             update.setTitle("User Removed");
                             update.setContentText(removeUser.getText().trim().toLowerCase()
                                     + " removed from the Social Network.");
+                            topT.setText("There are currently " + socialNetwork.getGraph().order()
+                                + " users.\n" + "There are currently " + socialNetwork.getGraph().size()
+                                + " friendships.\n" + "There are currently " + socialNetwork.getGraph().numberOfGroups()+".");
                             update.showAndWait();
                             //Add command to the log file 
                             socialNetwork.updateLogFile(words, logFW);
@@ -554,6 +574,9 @@ public class Main extends Application {
                             update.setContentText(addFriend1.getText().trim().toLowerCase() + " and "
                                     + addFriend2.getText().trim().toLowerCase()
                                     + " are now friends.");
+                            topT.setText("There are currently " + socialNetwork.getGraph().order()
+                                + " users.\n" + "There are currently " + socialNetwork.getGraph().size()
+                                + " friendships.\n" + "There are currently " + socialNetwork.getGraph().numberOfGroups()+".");
                             update.showAndWait();
                             //Add command to the log file 
                             socialNetwork.updateLogFile(words, logFW);
@@ -676,6 +699,9 @@ public class Main extends Application {
                                 update.setContentText(removeFriend1.getText().trim().toLowerCase()
                                         + " and " + removeFriend2.getText().trim().toLowerCase()
                                         + " are no longer friends.");
+                                topT.setText("There are currently " + socialNetwork.getGraph().order()
+                                    + " users.\n" + "There are currently " + socialNetwork.getGraph().size()
+                                    + " friendships.\n" + "There are currently " + socialNetwork.getGraph().numberOfGroups()+".");
                                 update.showAndWait();
                                 //Add command to the log file 
                                 socialNetwork.updateLogFile(words, logFW);
@@ -797,6 +823,8 @@ public class Main extends Application {
         ButtonType noClear = new ButtonType("Changed My Mind");
         Alert makeSure = new Alert(AlertType.NONE,
             "Are you sure you want to clear the social network", clear, noClear);
+        
+        Alert isCleared = new Alert(AlertType.NONE,"Socail Network Cleared!!!",ButtonType.OK );
 
         // EventHandler instance clear the Social Network
         EventHandler<ActionEvent> clearSocialNetwork = new EventHandler<ActionEvent>() {
@@ -805,7 +833,7 @@ public class Main extends Application {
                 // Alert gui user to make sure they want to clear the Social Network
                 Optional<ButtonType> result = makeSure.showAndWait();
                 if (result.orElse(clear) == clear) {
-                    Set<String> allUsers = socialNetwork.getGraph().allUserNames;
+                    Set<String> allUsers = socialNetwork.getGraph().getAllUsers();
                     // Updating the log file since every user is being removed
                     for (String user : allUsers) {
                         String[] cmd = {"r", user};
@@ -823,8 +851,15 @@ public class Main extends Application {
                     mutualUsersList.clear();
                     // Resetting the mutual friend text
                     mutualFriendsText.setText("Mutual Friends");
+                    //clear the current central user 
+                    socialNetwork.setCentralUser(null);
                     // Setting the center to a new label
-                    root.setCenter(new Label("Socail Network Cleared"));
+                    topT.setText("There are currently " + socialNetwork.getGraph().order()
+                        + " users.\n" + "There are currently " + socialNetwork.getGraph().size()
+                        + " friendships.\n" + "There are currently " + socialNetwork.getGraph().numberOfGroups()+".");
+                    root.setCenter(new Label(""));
+                    
+                    isCleared.showAndWait();
 
                 }
             }
@@ -833,7 +868,49 @@ public class Main extends Application {
 
 
         clearSN.setOnAction(clearSocialNetwork);
-       
+///////////////////////////////////////////////////////////////////////////////
+        //Show shortest path between two users 
+        Alert graphAlgorithms = new Alert(AlertType.NONE,"",ButtonType.OK );
+    
+        Button shortestPathBTN = new Button("View");
+        Label  shortestPathL= new Label("Get Shortest Path");
+        shortestPathL.setFont(new Font("Arial", 14));
+        TextField shortestPathFriend1 = new TextField();
+        TextField shortestPathFriend2 = new TextField();
+        
+        
+        shortestPathFriend1.setMaxWidth(100);
+        shortestPathFriend2.setMaxWidth(100);
+        HBox shortestPathFriendBox = new HBox();
+        shortestPathFriendBox.setSpacing(5);
+        shortestPathFriendBox.getChildren().addAll(shortestPathFriend1, shortestPathFriend2);
+        imageBox.getChildren().addAll(shortestPathL, shortestPathBTN, 
+            shortestPathFriendBox);
+        
+        
+        
+        EventHandler<ActionEvent> shortestPath = new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent arg0) {
+                
+                ArrayList<String> sp = socialNetwork.getGraph().
+                    getShortestPath(shortestPathFriend1.getText(),
+                        shortestPathFriend2.getText());
+                if(sp != null) {
+                graphAlgorithms.setContentText("" + sp);
+                graphAlgorithms.showAndWait();
+                }else {
+                    graphAlgorithms
+                        .setContentText("NO PATH");
+                    graphAlgorithms.showAndWait();
+                }
+                
+            }
+        };
+        
+        shortestPathBTN.setOnAction(shortestPath);
+        shortestPathFriend1.setOnAction(shortestPath);
+        shortestPathFriend2.setOnAction(shortestPath);
 ///////////////////////////////////////////////////////////////////////////////
         // CODE TO UPDATE GUI WHEN NAMES IN THE TWO ListView INSTANCES ARE
         // CLICKED ON
