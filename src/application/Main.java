@@ -7,6 +7,7 @@ package application;
 // Course:          (CS 400, Fall, 2019)
 //
 ///////////////////////////////////////////////////////////////////////////////
+
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
