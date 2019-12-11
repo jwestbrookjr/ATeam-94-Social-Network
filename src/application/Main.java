@@ -31,16 +31,10 @@ import javafx.scene.control.ButtonType;
 import javafx.scene.control.Label;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.input.MouseEvent;
-import javafx.scene.layout.Background;
-import javafx.scene.layout.BackgroundFill;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.paint.Color;
-import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -346,13 +340,13 @@ public class Main extends Application {
 						createUserDisplay(socialNetwork.getCentralUser(), root,
 								vbox1, hbox);
 					} else {
-						return;
+					
 					}
 
 					allUserNamesDisplayed
 							.addAll(socialNetwork.getGraph().getAllUsers());
 					allUsersDisplayedList.setItems(allUserNamesDisplayed);
-					// numOfUsersDisplayed.setText("Users In Network");
+				
 					root.setRight(imageBox);
 				}
 			}
@@ -1109,7 +1103,16 @@ public class Main extends Application {
 						.getShortestPath(shortestPathFriend1.getText(),
 								shortestPathFriend2.getText());
 				if (shortestPath != null) {
-					graphAlgorithms.setContentText("" + shortestPath);
+				    String path = "";
+				    for(int i = 0; i < shortestPath.size(); i++) {
+				        if(i == 0) {
+				            path += shortestPath.get(i);
+				        }else {
+				            path += " -> " + shortestPath.get(i);
+				        }
+				        
+				    }
+					graphAlgorithms.setContentText(path);
 					graphAlgorithms.showAndWait();
 				} else {
 					graphAlgorithms.setContentText("NO PATH!");
