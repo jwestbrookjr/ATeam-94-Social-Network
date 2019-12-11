@@ -20,6 +20,7 @@ import javafx.application.Application;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.Event;
 import javafx.event.EventHandler;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
@@ -38,6 +39,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import javafx.stage.WindowEvent;
 
 /**
@@ -359,7 +361,9 @@ public class Main extends Application {
 			@Override
 			public void handle(ActionEvent arg0) {
 				Alert helpMe = new Alert(AlertType.NONE,
-						"Please contact the system administrator for help.",
+						"Please contact the system administrator for help or "
+						+ "post your question to Piazza.\nAll user's in this"
+						+ " social network are lower case. ",
 						ButtonType.OK);
 				helpMe.setTitle("Help!");
 				helpMe.showAndWait();
@@ -573,6 +577,8 @@ public class Main extends Application {
 					String[] words = { "r",
 							removeUser.getText().trim().toLowerCase() };
 					try {
+					    //Current central user
+					    GraphNode cU = socialNetwork.getCentralUser();
 						// Number of people in the social network.
 						int numberOfUsers = socialNetwork.getGraph().order();
 						// Look at updateSocialNetwork for the details of this
@@ -616,18 +622,21 @@ public class Main extends Application {
 						// If the current list of friends being displayed
 						// contains the user that was just removed, update
 						// the list.
-						if (namesOfFriends.contains(
-								removeUser.getText().trim().toLowerCase())) {
-							namesOfFriends.remove(
+						if(namesOfFriends != null) {
+						    if (namesOfFriends.contains(
+								   removeUser.getText().trim().toLowerCase())) {
+						        namesOfFriends.remove(
 									removeUser.getText().trim().toLowerCase());
 						}
-						// If current central user is deleted, replace the user
-						// info being displayed with "Removed Central User".
-						if (socialNetwork.getCentralUser().getUserName().equals(
-								removeUser.getText().trim().toLowerCase())) {
+						}
+						// If the current central user is deleted, replace the 
+						//user info being displayed with "Removed Central User".
+						if(cU != null &&
+						    socialNetwork.getCentralUser() == null) {
 							root.setCenter(new Label("Removed central user."));
 						}
 					} catch (Exception e) {
+					    e.printStackTrace();
 						Alert failRemove = new Alert(AlertType.ERROR,
 								"Remove user error!", ButtonType.OK);
 						failRemove.show();
@@ -1153,7 +1162,6 @@ public class Main extends Application {
 					} catch (Exception e) {
 
 					}
-
 					socialNetwork.setCentralUser(socialNetwork.getGraph()
 							.search(namesOfFriends.get(indexOfFriend)));
 					createUserDisplay(socialNetwork.getCentralUser(), root,
@@ -1176,6 +1184,13 @@ public class Main extends Application {
 				} else {
 					hbox.getChildren().clear();
 					vbox1.getChildren().clear();
+					String[] words = { "s", allUserNamesDisplayed.get(indexOfFriend) };
+					   try {
+	                        // Add command to the log file.
+	                        socialNetwork.updateLogFile(words, logFW);
+	                    } catch (Exception e) {
+
+	                    }
 					socialNetwork.setCentralUser(socialNetwork.getGraph()
 							.search(allUserNamesDisplayed.get(indexOfFriend)));
 					createUserDisplay(socialNetwork.getCentralUser(), root,
@@ -1192,7 +1207,7 @@ public class Main extends Application {
 
 		Alert alertOnExit = new Alert(AlertType.NONE,
 				"Do you want to save the log file to your computer?", save,
-				noSave);
+				noSave, ButtonType.CANCEL);
 		alertOnExit.setTitle("Exiting Social Network");
 
 		Alert alertOnSave = new Alert(AlertType.NONE,
@@ -1207,18 +1222,15 @@ public class Main extends Application {
 		/**
 		 * Event handler that executes when GUI is closed.
 		 */
-		EventHandler<WindowEvent> promptOnClose = new EventHandler<WindowEvent>() {
-			@Override
-			public void handle(WindowEvent arg0) {
-				try {
-					logFW.close();
-				} catch (IOException e) {
-				}
+		EventHandler<WindowEvent> promptOnClose = event -> {
 				// Store what button was clicked in the alertOnExit alert.
-				Optional<ButtonType> result = alertOnExit.showAndWait();
-
+				Optional<ButtonType> result = alertOnExit.showAndWait();		
 				// If the save button was clicked.
 				if (result.orElse(save) == save) {
+				    try {
+	                    logFW.close();
+	                } catch (IOException e) {
+	                }
 					// FileChooser to prompt user to save a file on their
 					// computer.
 					File fileToSave = fileChooser.showSaveDialog(primaryStage);
@@ -1232,7 +1244,7 @@ public class Main extends Application {
 							alertOnSave.showAndWait();
 						} catch (Exception e) {
 							// Some IOException; file not saved.
-							alertOnSave.setContentText("File Not Saved");
+							alertOnSave.setContentText("File Not Saved");	
 							alertOnSave.showAndWait();
 						}
 					} else {
@@ -1241,11 +1253,12 @@ public class Main extends Application {
 						alertOnSave.setContentText("File Not Saved");
 						alertOnSave.showAndWait();
 					}
-				}
-				if (result.orElse(noSave) == noSave) {
+				}else if (result.orElse(noSave) == noSave) {
 					alertOnNoSave.showAndWait();
-				}
-			}
+				}else {
+			            event.consume();
+			        }
+			
 		};
 
 		primaryStage.setOnCloseRequest(promptOnClose);
