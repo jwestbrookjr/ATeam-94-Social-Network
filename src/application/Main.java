@@ -275,6 +275,10 @@ public class Main extends Application {
 		VBox fileBox = new VBox();
 		fileBox.setSpacing(10);
 
+		// Creates a new HBox and updates it spacing.
+		HBox buttonBox = new HBox();
+		buttonBox.setSpacing(10);
+
 		// Creates new items to add to this VBox: FileChooser, button, and
 		// label.
 		FileChooser fileChooser = new FileChooser();
@@ -282,8 +286,15 @@ public class Main extends Application {
 		Label fileAdd = new Label("Select file to update the Social Network.");
 		fileAdd.setStyle(cssTextStyle);
 
+		// Creates a new help button.
+		Button helpBTN = new Button("Help!");
+
+		// Adds button to this HBox.
+		buttonBox.getChildren().addAll(fileButton, helpBTN);
+		buttonBox.setAlignment(Pos.BOTTOM_CENTER);
+
 		// Adds items to this VBox.
-		fileBox.getChildren().addAll(fileAdd, fileButton);
+		fileBox.getChildren().addAll(fileAdd, buttonBox);
 
 		/**
 		 * EventHandler for updating the social network.
@@ -346,8 +357,24 @@ public class Main extends Application {
 				}
 			}
 		};
+
+		/**
+		 * EventHandler instance which implements functionality for help alert.
+		 */
+		EventHandler<ActionEvent> helpEvent = new EventHandler<ActionEvent>() {
+			@Override
+			public void handle(ActionEvent arg0) {
+				Alert helpMe = new Alert(AlertType.NONE,
+						"Please contact the system administrator for help.",
+						ButtonType.OK);
+				helpMe.setTitle("Help!");
+				helpMe.showAndWait();
+			}
+		};
+
 		// When the button is pressed the method above will execute.
 		fileButton.setOnAction(updateSociallNetwork);
+		helpBTN.setOnAction(helpEvent);
 		fileBox.setAlignment(Pos.BOTTOM_CENTER);
 		root.setBottom(fileBox);
 
@@ -487,8 +514,8 @@ public class Main extends Application {
 						if (socialNetwork.getGraph().search(addUser.getText()
 								.trim().toLowerCase()) != null) {
 							update.setTitle("Duplicate User");
-							update.setContentText("User "
-									+ addUser.getText().trim().toLowerCase()
+							update.setContentText(addUser.getText().trim()
+									.toLowerCase()
 									+ " already in the Social Network.");
 							update.showAndWait();
 							addUser.clear();
@@ -502,9 +529,9 @@ public class Main extends Application {
 						if (numberOfUsers == socialNetwork.getGraph().order()
 								- 1) {
 							update.setTitle("User Added");
-							update.setContentText("User "
-									+ addUser.getText().trim().toLowerCase()
-									+ " added to Social Network.");
+							update.setContentText(
+									addUser.getText().trim().toLowerCase()
+											+ " added to Social Network.");
 							statsText.setText("Network consists of: "
 									+ socialNetwork.getGraph().order()
 									+ " users, "
@@ -1049,6 +1076,7 @@ public class Main extends Application {
 
 		// Alert which shows the shortest path between two users.
 		Alert graphAlgorithms = new Alert(AlertType.NONE, "", ButtonType.OK);
+		graphAlgorithms.setTitle("Show Shortest Path Between These Users");
 
 		// Creates new UI components for user to find shortest path between two
 		// users.
