@@ -300,7 +300,7 @@ public class Main extends Application {
 			public void handle(ActionEvent e) {
 				// Get the file selected by the GUI user.
 				File file = fileChooser.showOpenDialog(primaryStage);
-
+			    GraphNode cU = socialNetwork.getCentralUser();
 				if (file != null) {
 					try {// If an error occurs when trying to create
 							// a new Social Network with the file the GUI
@@ -308,6 +308,7 @@ public class Main extends Application {
 							// network and have a pop up window display.
 						SocialNetwork newSN = new SocialNetwork();
 						newSN.createSocialNetWork(file);
+					
 						socialNetwork.createSocialNetWork(file);
 						socialNetwork.updateLogFile(file, logFW);
 						statsText.setText("Network consists of: "
@@ -331,7 +332,7 @@ public class Main extends Application {
 					}
 					// If the central user is changed by the file, then
 					// what is displayed on the GUI will be updated.
-					if (socialNetwork.getCentralUser() != null) {
+					if (socialNetwork.getCentralUser() != cU) {
 						// Clear the HBox and VBox that are currently displaying
 						// the central user.
 						hbox.getChildren().clear();
@@ -344,7 +345,7 @@ public class Main extends Application {
 					} else {
 					
 					}
-
+					allUserNamesDisplayed.clear();
 					allUserNamesDisplayed
 							.addAll(socialNetwork.getGraph().getAllUsers());
 					allUsersDisplayedList.setItems(allUserNamesDisplayed);
@@ -1262,7 +1263,7 @@ public class Main extends Application {
 		};
 
 		primaryStage.setOnCloseRequest(promptOnClose);
-
+ 
 ////////////////////////////////////////////////////////////////////////////////
 
 		// Creates a Scene and opens it upon the primary stage.
