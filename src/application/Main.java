@@ -50,8 +50,8 @@ import javafx.stage.WindowEvent;
  */
 public class Main extends Application {
 	// Fields which dictate window size.
-	private static final int WINDOW_WIDTH = 1024;
-	private static final int WINDOW_HEIGHT = 650;
+	private static final int WINDOW_WIDTH = 1200;
+	private static final int WINDOW_HEIGHT = 800;
 	// Creates a SocialNetwork Instance.
 	SocialNetwork socialNetwork = new SocialNetwork();
 
@@ -285,8 +285,11 @@ public class Main extends Application {
 		// Creates a new help button.
 		Button helpBTN = new Button("Help!");
 
+		// Creates an exit button.
+		Button exitBTN = new Button("Exit");
+
 		// Adds button to this HBox.
-		buttonBox.getChildren().addAll(fileButton, helpBTN);
+		buttonBox.getChildren().addAll(fileButton, helpBTN, exitBTN);
 		buttonBox.setAlignment(Pos.BOTTOM_CENTER);
 
 		// Adds items to this VBox.
@@ -300,7 +303,7 @@ public class Main extends Application {
 			public void handle(ActionEvent e) {
 				// Get the file selected by the GUI user.
 				File file = fileChooser.showOpenDialog(primaryStage);
-			    GraphNode cU = socialNetwork.getCentralUser();
+				GraphNode cU = socialNetwork.getCentralUser();
 				if (file != null) {
 					try {// If an error occurs when trying to create
 							// a new Social Network with the file the GUI
@@ -308,7 +311,7 @@ public class Main extends Application {
 							// network and have a pop up window display.
 						SocialNetwork newSN = new SocialNetwork();
 						newSN.createSocialNetWork(file);
-					
+
 						socialNetwork.createSocialNetWork(file);
 						socialNetwork.updateLogFile(file, logFW);
 						statsText.setText("Network consists of: "
@@ -343,13 +346,13 @@ public class Main extends Application {
 						createUserDisplay(socialNetwork.getCentralUser(), root,
 								vbox1, hbox);
 					} else {
-					
+
 					}
 					allUserNamesDisplayed.clear();
 					allUserNamesDisplayed
 							.addAll(socialNetwork.getGraph().getAllUsers());
 					allUsersDisplayedList.setItems(allUserNamesDisplayed);
-				
+
 					root.setRight(imageBox);
 				}
 			}
@@ -363,8 +366,8 @@ public class Main extends Application {
 			public void handle(ActionEvent arg0) {
 				Alert helpMe = new Alert(AlertType.NONE,
 						"Please contact the system administrator for help or "
-						+ "post your question to Piazza.\nAll user's in this"
-						+ " social network are lower case. ",
+								+ "post your question to Piazza.\nNOTE: All users in this"
+								+ " social network are lower case. ",
 						ButtonType.OK);
 				helpMe.setTitle("Help!");
 				helpMe.showAndWait();
@@ -578,8 +581,8 @@ public class Main extends Application {
 					String[] words = { "r",
 							removeUser.getText().trim().toLowerCase() };
 					try {
-					    //Current central user
-					    GraphNode cU = socialNetwork.getCentralUser();
+						// Current central user
+						GraphNode cU = socialNetwork.getCentralUser();
 						// Number of people in the social network.
 						int numberOfUsers = socialNetwork.getGraph().order();
 						// Look at updateSocialNetwork for the details of this
@@ -623,21 +626,22 @@ public class Main extends Application {
 						// If the current list of friends being displayed
 						// contains the user that was just removed, update
 						// the list.
-						if(namesOfFriends != null) {
-						    if (namesOfFriends.contains(
-								   removeUser.getText().trim().toLowerCase())) {
-						        namesOfFriends.remove(
-									removeUser.getText().trim().toLowerCase());
+						if (namesOfFriends != null) {
+							if (namesOfFriends.contains(removeUser.getText()
+									.trim().toLowerCase())) {
+								namesOfFriends.remove(removeUser.getText()
+										.trim().toLowerCase());
+							}
 						}
-						}
-						// If the current central user is deleted, replace the 
-						//user info being displayed with "Removed Central User".
-						if(cU != null &&
-						    socialNetwork.getCentralUser() == null) {
+						// If the current central user is deleted, replace the
+						// user info being displayed with "Removed Central
+						// User".
+						if (cU != null
+								&& socialNetwork.getCentralUser() == null) {
 							root.setCenter(new Label("Removed central user."));
 						}
 					} catch (Exception e) {
-					    e.printStackTrace();
+						e.printStackTrace();
 						Alert failRemove = new Alert(AlertType.ERROR,
 								"Remove user error!", ButtonType.OK);
 						failRemove.show();
@@ -1113,15 +1117,15 @@ public class Main extends Application {
 						.getShortestPath(shortestPathFriend1.getText(),
 								shortestPathFriend2.getText());
 				if (shortestPath != null) {
-				    String path = "";
-				    for(int i = 0; i < shortestPath.size(); i++) {
-				        if(i == 0) {
-				            path += shortestPath.get(i);
-				        }else {
-				            path += " -> " + shortestPath.get(i);
-				        }
-				        
-				    }
+					String path = "";
+					for (int i = 0; i < shortestPath.size(); i++) {
+						if (i == 0) {
+							path += shortestPath.get(i);
+						} else {
+							path += " -> " + shortestPath.get(i);
+						}
+
+					}
 					graphAlgorithms.setContentText(path);
 					graphAlgorithms.showAndWait();
 				} else {
@@ -1185,13 +1189,14 @@ public class Main extends Application {
 				} else {
 					hbox.getChildren().clear();
 					vbox1.getChildren().clear();
-					String[] words = { "s", allUserNamesDisplayed.get(indexOfFriend) };
-					   try {
-	                        // Add command to the log file.
-	                        socialNetwork.updateLogFile(words, logFW);
-	                    } catch (Exception e) {
+					String[] words = { "s",
+							allUserNamesDisplayed.get(indexOfFriend) };
+					try {
+						// Add command to the log file.
+						socialNetwork.updateLogFile(words, logFW);
+					} catch (Exception e) {
 
-	                    }
+					}
 					socialNetwork.setCentralUser(socialNetwork.getGraph()
 							.search(allUserNamesDisplayed.get(indexOfFriend)));
 					createUserDisplay(socialNetwork.getCentralUser(), root,
@@ -1224,46 +1229,89 @@ public class Main extends Application {
 		 * Event handler that executes when GUI is closed.
 		 */
 		EventHandler<WindowEvent> promptOnClose = event -> {
-				// Store what button was clicked in the alertOnExit alert.
-				Optional<ButtonType> result = alertOnExit.showAndWait();		
-				// If the save button was clicked.
-				if (result.orElse(save) == save) {
-				    try {
-	                    logFW.close();
-	                } catch (IOException e) {
-	                }
-					// FileChooser to prompt user to save a file on their
-					// computer.
-					File fileToSave = fileChooser.showSaveDialog(primaryStage);
-					// If the GUI user chooses a file.
-					if (fileToSave != null) {
-						try {
-							// Copy contents of the log file to the new file
-							// saved.
-							Files.copy(logFile.toPath(), fileToSave.toPath(),
-									StandardCopyOption.REPLACE_EXISTING);
-							alertOnSave.showAndWait();
-						} catch (Exception e) {
-							// Some IOException; file not saved.
-							alertOnSave.setContentText("File Not Saved");	
-							alertOnSave.showAndWait();
-						}
-					} else {
-						// GUI user decided not to save a file, hit cancel in
-						// file explorer.
+			// Store what button was clicked in the alertOnExit alert.
+			Optional<ButtonType> result = alertOnExit.showAndWait();
+			// If the save button was clicked.
+			if (result.orElse(save) == save) {
+				try {
+					logFW.close();
+				} catch (IOException e) {
+				}
+				// FileChooser to prompt user to save a file on their
+				// computer.
+				File fileToSave = fileChooser.showSaveDialog(primaryStage);
+				// If the GUI user chooses a file.
+				if (fileToSave != null) {
+					try {
+						// Copy contents of the log file to the new file
+						// saved.
+						Files.copy(logFile.toPath(), fileToSave.toPath(),
+								StandardCopyOption.REPLACE_EXISTING);
+						alertOnSave.showAndWait();
+					} catch (Exception e) {
+						// Some IOException; file not saved.
 						alertOnSave.setContentText("File Not Saved");
 						alertOnSave.showAndWait();
 					}
-				}else if (result.orElse(noSave) == noSave) {
-					alertOnNoSave.showAndWait();
-				}else {
-			            event.consume();
-			        }
-			
+				} else {
+					// GUI user decided not to save a file, hit cancel in
+					// file explorer.
+					alertOnSave.setContentText("File Not Saved");
+					alertOnSave.showAndWait();
+				}
+			} else if (result.orElse(noSave) == noSave) {
+				alertOnNoSave.showAndWait();
+			} else {
+				event.consume();
+			}
+
 		};
 
+		/*
+		 * Event handler for exit button functionality.
+		 */
+		exitBTN.setOnAction((ActionEvent event) -> {
+			// Store what button was clicked in the alertOnExit alert.
+			Optional<ButtonType> result = alertOnExit.showAndWait();
+			// If the save button was clicked.
+			if (result.orElse(save) == save) {
+				try {
+					logFW.close();
+				} catch (IOException e) {
+				}
+				// FileChooser to prompt user to save a file on their
+				// computer.
+				File fileToSave = fileChooser.showSaveDialog(primaryStage);
+				// If the GUI user chooses a file.
+				if (fileToSave != null) {
+					try {
+						// Copy contents of the log file to the new file
+						// saved.
+						Files.copy(logFile.toPath(), fileToSave.toPath(),
+								StandardCopyOption.REPLACE_EXISTING);
+						alertOnSave.showAndWait();
+					} catch (Exception e) {
+						// Some IOException; file not saved.
+						alertOnSave.setContentText("File Not Saved");
+						alertOnSave.showAndWait();
+					}
+				} else {
+					// GUI user decided not to save a file, hit cancel in
+					// file explorer.
+					alertOnSave.setContentText("File Not Saved");
+					alertOnSave.showAndWait();
+				}
+			} else if (result.orElse(noSave) == noSave) {
+				alertOnNoSave.showAndWait();
+			} else {
+				event.consume();
+			}
+			
+			primaryStage.close();
+		});
+
 		primaryStage.setOnCloseRequest(promptOnClose);
- 
+
 ////////////////////////////////////////////////////////////////////////////////
 
 		// Creates a Scene and opens it upon the primary stage.
